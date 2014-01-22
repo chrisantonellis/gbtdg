@@ -1,0 +1,702 @@
+
+// #############################################################################
+// Variables
+// #############################################################################
+
+@input-width: 	182px;
+@output-width:	640px;
+@output-height: 500px;
+@spacing:				 10px;
+@border-radius:   3px;
+
+// #############################################################################
+// Global
+// #############################################################################
+
+body
+{
+	margin: 0px;
+
+	font-family: 'Open Sans', sans-serif;
+	font-size: 13px;
+	color: #333;
+	background: url('img/bg.gif');
+}
+
+// #############################################################################
+// Hidden Elements
+// #############################################################################
+
+// Hidden Canvas
+canvas#hidden-canvas
+{
+	position: fixed;
+	z-index: -1;
+	visibility: hidden;
+}
+
+// Hidden File Input
+input[type="file"]#file-input
+{
+	position: fixed;
+	visibility: hidden;
+}
+
+// #############################################################################
+// Header
+// #############################################################################
+
+header
+{
+	display: block;
+
+	width: @input-width + @output-width - (@spacing * 2);
+	margin: 20px auto 10px auto;
+
+	color: #CCC;
+	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
+
+	img
+	{
+		display: inline-block;
+		position: relative;
+		top: 4px;
+
+		margin: 0px 2px 0px 0px;
+	}
+
+	span
+	{
+		display: inline-block;
+		margin: 0px;
+		padding: 0px;
+
+		font-size: 18px;
+	}
+
+	a
+	{
+		display: inline-block;
+		margin: 0px 0px 0px 15px;
+		padding: 5px 10px;
+
+		position: relative;
+		bottom: 1px;
+
+		font-size: 12px;
+		color: inherit;
+
+		text-decoration: none;
+
+		border-radius: @border-radius;
+
+		&:hover
+		{
+			color: #fff;
+			text-shadow: 0px 1px 0px #000;
+
+			background: rgba(0, 0, 0, 0.3);
+			box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.2);
+		}
+	}
+}
+
+
+// #############################################################################
+// Main Container
+// #############################################################################
+
+div#main
+{
+	margin: 0px auto;
+	padding: 0px;
+
+	width: (@input-width + @output-width);
+
+	border-radius: 3px;
+
+	overflow: hidden;
+
+	box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
+
+	background: #CCC;
+
+	position: relative;
+
+	overflow: hidden;
+
+	// ###########################################################################
+	// Text Page
+	// ###########################################################################
+	div#text-page
+	{
+		position: absolute;
+
+		z-index: 1000;
+
+		width: 100%;
+		height: 100%;
+
+		background: rgba(0, 0, 0, 0.5);
+
+		display: none;
+		opacity: 0;
+
+		a:not(.text-page)
+		{
+			color: inherit;
+
+			&:hover
+			{
+				color: #000;
+			}
+		}
+
+		a.text-page
+		{
+			display: inline-block;
+			margin: @spacing;
+			padding: 8px 20px;
+
+			color: #333;
+			text-decoration: none;
+
+			border: 1px solid rgba(0, 0, 0, 0.25);
+			border-radius: @border-radius;
+
+			box-shadow: inset 0px 1px 0px #FFF,
+												0px 1px 0px #FFF;
+
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7);
+
+			&:hover
+			{
+				border: 1px solid #999;
+				color: #000;
+				background: rgba(0, 0, 0, 0.05);
+			}
+		}
+
+		span
+		{
+			font-weight: 700;
+			color: #333;
+		}
+
+		div#content
+		{
+			margin: 0px;
+			padding: 10px;
+
+			background: #E8E8E8;
+
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
+
+			color: #404040;
+
+			h1
+			{
+				display: block;
+				margin: 10px;
+				padding: 0px 0px 5px 0px;
+
+				color: #333;
+				font-weight: normal;
+				font-size: 18px;
+				text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7);
+
+				border-bottom: 1px dotted rgba(0, 0, 0, 0.4);
+			}
+
+			p
+			{
+				margin: @spacing;
+			}
+
+			table#compatibility
+			{
+				display: block;
+				margin: @spacing;
+
+				border: 1px solid #CCC;
+				border-radius: @border-radius;
+
+				overflow: hidden;
+
+				tr
+				{
+					&:first-child
+					{
+						td
+						{
+							border-bottom: 1px solid #D0D0D0;
+						}
+					}
+
+					td
+					{
+						&:first-child
+						{
+							background: #D0D0D0;
+						}
+
+						&:last-child
+						{
+							font-size: 11px;
+
+							width: 99%;
+
+							padding: 0px 0px 0px @spacing;
+						}
+
+						&.icon
+						{
+							padding: 6px 8px 2px 6px;
+
+							border-right: 1px dotted #D0D0D0;
+
+							img.broken
+							{
+								opacity: 0.25;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Headings H1
+	form#input, div#output
+	{
+		h1
+		{
+			display: block;
+
+			margin: 0px;
+			padding: @spacing;
+			margin: 0px;
+
+			font-size: 14px;
+			font-weight: normal;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+
+			img
+			{
+				margin: -10px 10px 0px 0px;
+				position: relative;
+				top: 2px;
+			}
+		}
+	}
+
+	// ###########################################################################
+	// Advanced Options Control
+	// ###########################################################################
+	
+	a#advanced-control
+	{
+		display: block;
+		position: absolute;
+		left: 0px;
+		bottom: 0px;
+
+		padding: @spacing;
+
+		text-decoration: none;
+		font-size: 11px;
+		text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+
+		color: #333;
+
+		&:visited
+		{
+			color: #333
+		}
+
+		&:hover
+		{
+			color: #000;
+		}
+	}
+
+	// ###########################################################################
+	// Input Column
+	// ###########################################################################
+	
+	form#input
+	{
+		display: block;
+		float: left;
+		margin: 0px;
+		padding: 0px;
+
+		width: @input-width;
+		height: 100%;
+
+		position: relative;
+		z-index: 50;
+
+		// Visible Canvas ----------------------------------------------------------
+		figure
+		{
+			display: block;
+
+			margin: 0px @spacing @spacing @spacing;
+			padding: 0px;
+
+			border: 1px solid rgba(0, 0, 0, 0.6);
+
+			border-radius: @border-radius;
+
+			box-shadow:
+							-1px 0px 0px rgba(255, 255, 255, 0.7), // outside left
+				 			 1px 0px 0px rgba(255, 255, 255, 0.7), // outside right
+				 			 0px 1px 0px rgba(255, 255, 255, 0.7); // outside bottom
+			
+			overflow: hidden;
+
+			&:hover
+			{
+				canvas
+				{
+					opacity: 0.5;
+				}
+			}
+
+			canvas#canvas
+			{
+				display: block;
+				margin: 0px;
+				padding: 0px;
+
+				width: 160px
+				height: 144px;
+
+				background: transparent;
+
+				background: url("img/image-canvas-bg.gif");
+			}
+		}
+
+		// Image Attributes --------------------------------------------------------
+		ul#attributes
+		{
+			display: block;
+			margin: 0px 0px @spacing 0px;
+			padding: @spacing 0px;
+
+			width: 100%;
+
+			list-style-type: none;
+
+			font-size: 10px;
+			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+
+			border-top: 1px solid rgba(0, 0, 0, 0.4);
+
+			box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+
+			li
+			{
+				span.title
+				{
+					display: inline-block;
+					margin: 0px;
+					padding: 0px;
+
+					width: 50px;
+
+					text-align: right;
+					text-shadow: none;
+				}
+
+				span:not(.title)
+				{
+					color: #000;
+				}
+			}
+		}
+
+		// Output Options ----------------------------------------------------------
+		ul#options
+		{
+			display: block;
+			margin: 0px;
+			padding: 0px;
+
+			width: 100%;
+
+			list-style-type: none;
+
+			border-top:		 1px solid rgba(0, 0, 0, 0.4);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+			
+			li
+			{
+				display: block;
+
+				border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+				box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
+
+				-webkit-user-select: none;	// safari, chrome
+		    -moz-user-select: none;			// firefox
+		    -khtml-user-select: none; 	// konqueror
+
+		    &:hover
+		    {
+		    	background: #BBB;
+
+		    	label
+		    	{
+		    		color: #000;
+		    	}
+		    }
+
+		    label.label
+				{
+					display: block;
+					margin: 0px;
+					padding: 5px @spacing;
+
+					width: 100%;
+					height: 100%;
+
+					text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+				}
+
+				label.pad-value
+				{
+					display: inline-block;
+					margin: 0px;
+					padding: 0px;
+				}
+
+				input[type="checkbox"]
+				{
+					position: relative;
+					top: 1px;
+
+					margin: 0px 5px 0px 0px;
+				}
+
+				span
+				{
+					display: block;
+					margin: 0px 0px 5px 0px;
+					padding: 0px;
+
+					font-size: 12px;
+				}
+
+				div.text-input
+				{
+					display: inline-block;
+					margin: 0px;
+					padding: 0px;
+
+					input[type="text"]
+					{
+						display: block;
+
+						margin: 0px 0px 5px 0px;
+						padding: 3px;
+
+						font-size: 11px;
+
+						border: 1px solid rgba(0, 0, 0, 0.6);
+						border-radius: @border-radius;
+
+						box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2),
+															0px 1px 0px rgba(255, 255, 255, 0.8);
+
+						&#line-label, &#constant-label
+						{
+							width: 80px;
+						}
+
+						&#hex-prefix
+						{
+							width: 20px;
+							text-align: center;
+						}
+
+						&.pad-value
+						{
+							display: inline-block;
+							margin: 0px 5px 5px 5px;
+							width: 20px;
+
+							text-align: center;
+						}
+					}
+				}
+
+				p
+				{
+					margin-left: 0px;
+				}
+			}
+		}
+
+		// Advanced Options --------------------------------------------------------
+		div#advanced-options
+		{
+			position: absolute;
+			background: #CCC;
+
+			width: @input-width;
+			height: 100%;
+
+			z-index: 1000;
+
+			position: absolute;
+			left: @input-width;
+
+			border-top-left-radius: @border-radius;
+
+			p
+			{
+				display: block;
+				margin: 0px 0px 5px 10px;
+				padding: 0px 20px 0px 0px;
+				font-size: 10px;
+				line-height: 1.2;
+				text-shadow: none;
+			}
+		}
+	}
+
+	// ###########################################################################
+	// Output Column
+	// ###########################################################################
+	div#output
+	{
+		display: block;
+		box-sizing: border-box;
+
+		margin: 0px;
+		padding: 0px 0px @spacing 0px;
+
+		width: @output-width;
+		min-height: 400px;
+
+		margin: 0px 0px 0px @input-width;
+
+		background: #fff;
+
+		border-left: 1px solid rgba(0, 0, 0, 0.8);
+
+		border-top-right-radius: 		@border-radius;
+		border-bottom-right-radius: @border-radius;
+
+		box-shadow: -1px 0px 2px rgba(0, 0, 0, 0.2);
+
+		position: relative;
+		z-index: 100;
+
+		// Download
+		a#download
+		{
+			float: right;
+			padding: @spacing;
+			margin: 0px 5px;
+
+			color: inherit;
+			text-decoration: none;
+
+			&:hover
+			{
+				color: #000;
+				text-decoration: underline;
+			}
+		}
+
+		// Textarea
+		div#textarea-container
+		{
+			display: block;
+
+			box-sizing: border-box;
+
+			margin: 0px;
+			padding: 0px;
+
+			overflow: hidden;
+
+			textarea
+			{
+				display: block;
+
+				margin: 0px @spacing;
+				padding: 10px;
+
+				width: @output-width - ((@spacing * 4) + 2);
+				min-height: @output-height;
+
+				border: 0px;
+				background: #E0E0E0;
+
+				font-family: "Lucida Console", monospace;
+				font-size: 11px;
+				color: #333;
+
+				resize: none;
+				
+				border: 1px solid rgba(0, 0, 0, 0.6);
+				border-radius: @border-radius;
+
+				&:focus
+				{
+					outline: none;
+				}
+			}
+		}
+	}
+}
+
+// Footer
+footer
+{
+	display: block;
+	margin: 0px auto;
+	padding: @spacing 0px;
+
+	width: @input-width + @output-width;
+
+	text-align: right;
+
+	span
+	{
+		display: block;
+		margin: 0px @spacing;
+
+		font-size: 11px;
+		color: #666;
+		text-shadow: 0px -1px 0pc rgba(0, 0, 0, 0.3);
+
+		a
+		{
+			text-decoration: none;
+			color: inherit;
+
+			&:hover
+			{
+				color: #999;
+			}
+		}
+
+		img
+		{
+			position: relative;
+			top: 2px;
+		}
+	}
+}
+
+// #############################################################################
+// Notes
+// #############################################################################
+
+// file input			- 26px
+// checkbox input - 16px
