@@ -680,6 +680,9 @@ function generateOutput() {
 		var actual_mapData;
 		var actual_mapData_length;
 
+		// Get Options Values
+    getOptionsValues();
+
 		// Clear Output Buffer
 		output_buffer = "";
 
@@ -772,7 +775,7 @@ function generateOutput() {
 		// Generate Tile Data Constants Output
 		if(o_tile_data === "checked") {
 
-			output_buffer += "; Tile Data Constants --"
+			output_buffer += "; Tile Data Constants --" +
 				"\r\n\r\n" +
 
 				"tile_data_size" +
@@ -864,7 +867,26 @@ function generateOutput() {
 ////////////////////////////////////////////////////////////////////////////////
 
 /** ----------------------------------------------------------------------------
- * @function loadOptionsValues() Loads options values from cookie into elements
+ * @function getOptionsValues() Gets options value
+ * -------------------------------------------------------------------------- */
+function getOptionsValues() {
+	// Checkboxes
+	o_tile_data = $("input#tile-data").attr("checked");
+	o_tile_map = $("input#tile-map").attr("checked");
+	o_tile_quan = $("input#tile-quantize").attr("checked");
+	o_pad_map = $("input#pad-map").attr("checked");
+
+	// Text Inputs
+	o_line_label = $("input#line-label").val().toString();
+	o_const_label = $("input#constant-label").val().toString();
+	o_hex_prefix = $("input#hex-prefix").val().toString();
+	o_pad_map_w = parseInt($("input#pad-map-width").val());
+	o_pad_map_h = parseInt($("input#pad-map-height").val());
+	o_pad_map_v = $("input#pad-map-value").val().toString();
+}
+
+/** ----------------------------------------------------------------------------
+ * @function loadOptionsValues() Loads default options values
  * -------------------------------------------------------------------------- */
 
 function loadOptionsValues() {
