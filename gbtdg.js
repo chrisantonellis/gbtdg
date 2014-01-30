@@ -1,7 +1,7 @@
 
 /* -----------------------------------------------------------------------------
  * Gameboy Tile Data Generator
- * gbtdg.js v1.1.1
+ * gbtdg.js v1.2.0
  * 2014 Chris Antonellis
  
  * GameBoy Tile Data Generator is a HTML5 / JS web application that will convert
@@ -364,6 +364,7 @@ $(document).ready(function() {
  * @function fileInputHandler() Attaches file input trigger event to preview
  *           image figure.
  * -------------------------------------------------------------------------- */
+ 
 function fileInputHandler() {
 	$("figure").click(function(e){
 		$("input#file-input").trigger("click");
@@ -373,6 +374,7 @@ function fileInputHandler() {
 /** ----------------------------------------------------------------------------
  * @function textPageHandler() Attaches event to text page controls
  * -------------------------------------------------------------------------- */
+
 function textPageHandler() {
 	var text_page = false;
 	var animating = false;
@@ -468,6 +470,7 @@ function advancedOptionsControl() {
 /** ----------------------------------------------------------------------------
  * @function optionsCheckboxesHandler() Attaches event handlers to checkboxes
  * -------------------------------------------------------------------------- */
+
 function optionsCheckboxesHandler() {
 
 	var checkboxes = $("input#tile-data").add($("input#tile-map"))

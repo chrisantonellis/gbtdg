@@ -1,6 +1,6 @@
 Gameboy Tile Data Generator (gbtdg)
 ==============
-v1.1.1
+v1.2.0
 
 Gameboy Tile Data Generator (gbtdg) is a HTML5 / JS web application that can convert bitmap images to hexidecimal data appropriate for use in tile based graphical applications, specifically Nintendo Gameboy (DMG) software.
 
@@ -12,14 +12,15 @@ http://www.chrisantonellis.com/gameboy/gbtdg
 
 Changelog
 =========
-2014/01/29 v1.1.1
+
+29/01/2014 v1.2.0
 - General cleanup
 - Removed cookie functions
 
-2014/01/18 v1.1.0
+18/01/2014 v1.1.0
 - Fixed local hosting and noted Linux support
 
-2012/11/05 v1.0.0
+11/05/2012 v1.0.0
 - Initial Release
 
 
