@@ -14,7 +14,8 @@ Changelog
 =========
 
 16/02/2014 v1.3.0
-- Add C syntex export
+- Add C syntax export
+- Make download use .h extension in C mode
 
 29/01/2014 v1.2.0
 - General cleanup
