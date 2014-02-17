@@ -894,7 +894,13 @@ function generateOutput() {
 		file_name_temp.pop();
 		file_name_temp = file_name_temp.join().toString();
 
-		$("a#download").attr("download", file_name_temp + download_ext);
+		var download_name = file_name_temp;
+		if (o_c_style === "checked") {
+			download_name += ".h";
+		} else {
+			download_name += download_ext;
+		}
+		$("a#download").attr("download", download_name);
 		$("a#download").attr("href", "data:Application/octet-stream," +
 			encodeURIComponent(output_buffer));
 
