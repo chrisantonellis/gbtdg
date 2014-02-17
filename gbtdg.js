@@ -1,7 +1,7 @@
 
 /* -----------------------------------------------------------------------------
  * Gameboy Tile Data Generator
- * gbtdg.js v1.2.0
+ * gbtdg.js v1.3.0
  * 2014 Chris Antonellis
  
  * GameBoy Tile Data Generator is a HTML5 / JS web application that will convert
@@ -50,6 +50,7 @@ var o_hex_prefix = "$";
 var o_pad_map_w = "32";
 var o_pad_map_h = "32";
 var o_pad_map_v = "00";
+var o_c_style = "unchecked";
 
 var file_name;
 var file_size;
@@ -168,7 +169,7 @@ $(document).ready(function() {
 				// Image Pixel Width
 				if(hidden_img.width % tile_pw !== 0) {
 					image_pw = hidden_img.width + (tile_pw - (hidden_img.width % tile_pw));
-					warnings.push("; WARNING:  Width of input image padded " +
+					warnings.push("WARNING:  Width of input image padded " +
 						(hidden_img.width % tile_pw) + "px to " + image_pw + "px");
 				} else {
 					image_pw = hidden_img.width;
@@ -180,7 +181,7 @@ $(document).ready(function() {
 				// Image Pixel Height
 				if(hidden_img.height % tile_ph !== 0) {
 					image_ph = hidden_img.height + (tile_ph - (hidden_img.height % tile_ph));
-					warnings.push("; WARNING: Height of input image padded " +
+					warnings.push("WARNING: Height of input image padded " +
 						(hidden_img.height % tile_ph) + "px to " + image_ph + "px");
 				} else {
 					image_ph = hidden_img.height;
@@ -252,7 +253,7 @@ $(document).ready(function() {
 						}
 
 				    // Save Greyscale RGB Data
-				    imageData.data[index] 		= new_val;
+				    imageData.data[index]     = new_val;
 				    imageData.data[index + 1] = new_val;
 				    imageData.data[index + 2] = new_val;
 				  }
@@ -474,7 +475,8 @@ function advancedOptionsControl() {
 function optionsCheckboxesHandler() {
 
 	var checkboxes = $("input#tile-data").add($("input#tile-map"))
-		.add($("input#tile-quantize")).add($("input#pad-map"));
+		.add($("input#tile-quantize")).add($("input#pad-map"))
+		.add($("input#c-style"));
 
 	$.each(checkboxes, function(){
 		$(this).click(function(){
@@ -683,23 +685,51 @@ function generateOutput() {
 		var actual_mapData;
 		var actual_mapData_length;
 
+
 		// Get Options Values
     getOptionsValues();
+
+		// Constants
+		var COMMENT = ";";
+		var ASSIGNMENT = o_const_label;
+		var HEXPREFIX = o_hex_prefix;
+		var LINEEND = "";
+		var LINEBEGIN = o_line_label;
+		var VARUCHAR = "";
+		var VARINT = "";
+		var ARRAYBEGIN = "";
+		var ARRAYEND = "";
+		var ARRAYLINEEND = "";
+
+		if (o_c_style === "checked") {
+			COMMENT = "//";
+			ASSIGNMENT = "=";
+			HEXPREFIX = "0x";
+			LINEEND = ";";
+			LINEBEGIN = " ";
+			var VARNAME = "bitmap_"
+				+ getCVarName(file_name) + "_";
+			VARUCHAR = "const unsigned char " + VARNAME;
+			VARINT = "const int " + VARNAME;
+			ARRAYBEGIN = " {\n";
+			ARRAYEND = "};";
+			ARRAYLINEEND = ",";
+		}
 
 		// Clear Output Buffer
 		output_buffer = "";
 
-		output_buffer += "; Input Image Attributes --" +
+		output_buffer += COMMENT + " Input Image Attributes --" +
 			"\r\n\r\n" +
-			"; Filename: " +
+			COMMENT + " Filename: " +
 			"\t" +
 			file_name +
 			"\r\n" +
-			"; Pixel Width:" +
+			COMMENT + " Pixel Width:" +
 			"\t" +
 			image_pw +
 			"px\r\n" +
-			"; Pixel Height:" +
+			COMMENT + " Pixel Height:" +
 			"\t" +
 			image_ph +
 			"px\r\n\r\n";
@@ -707,7 +737,7 @@ function generateOutput() {
 		// Include Warnings
 		if(warnings.length > 0) {
 			for(i = 0; i < warnings.length; i++) {
-				output_buffer += warnings[i] + "\r\n";
+				output_buffer += COMMENT + " " + warnings[i] + "\r\n";
 			}
 			output_buffer += "\r\n";
 		}
@@ -739,88 +769,92 @@ function generateOutput() {
 
 				if(o_pad_map === "checked") {
 
-					actual_tile_width  = generateHex(o_pad_map_w);
-					actual_tile_height = generateHex(o_pad_map_h);
+					actual_tile_width  = generateHex(o_pad_map_w, HEXPREFIX);
+					actual_tile_height = generateHex(o_pad_map_h, HEXPREFIX);
 
 				} else {
 
-					actual_tile_width  = generateHex(image_tw);
-					actual_tile_height = generateHex(image_th);
+					actual_tile_width  = generateHex(image_tw, HEXPREFIX);
+					actual_tile_height = generateHex(image_th, HEXPREFIX);
 
 				}
 
-				output_buffer += "; Map Data Constants --" +
-					"\r\n\r\n" +
-
-					"tile_map_size" +
-					"\t" +
-					o_const_label +
-					" " +
-					generateHex(actual_mapData_length) +
+				output_buffer += COMMENT + " Map Data Constants --" +
 					"\r\n" +
 
-					"tile_map_width" +
+					VARINT + "tile_map_size" +
 					"\t" +
-					o_const_label +
+					ASSIGNMENT +
+					" " +
+					generateHex(actual_mapData_length, HEXPREFIX) +
+					LINEEND + "\r\n" +
+
+					VARINT + "tile_map_width" +
+					"\t" +
+					ASSIGNMENT +
 					" " +
 					actual_tile_width +
-					"\r\n" +
+					LINEEND + "\r\n" +
 
-					"tile_map_height" +
+					VARINT + "tile_map_height" +
 					"\t" +
-					o_const_label +
+					ASSIGNMENT +
 					" " +
 					actual_tile_height +
-					"\r\n\r\n";
+					LINEEND + "\r\n\r\n";
 			}
 		}
 
 		// Generate Tile Data Constants Output
 		if(o_tile_data === "checked") {
 
-			output_buffer += "; Tile Data Constants --" +
-				"\r\n\r\n" +
-
-				"tile_data_size" +
-				"\t" +
-				o_const_label +
-				" " +
-				generateHex(actual_tileData_length * 16)  +
+			output_buffer += "\r\n" + COMMENT + " Tile Data Constants --" +
 				"\r\n" +
 
-				"tile_count" +
+				VARINT + "tile_data_size" +
 				"\t" +
-				o_const_label +
+				ASSIGNMENT +
 				" " +
-				generateHex(image_tc) +
-				"\r\n\r\n";
+				generateHex(actual_tileData_length * 16, HEXPREFIX)  +
+				LINEEND + "\r\n" +
+
+				VARINT + "tile_count" +
+				"\t" +
+				ASSIGNMENT +
+				" " +
+				generateHex(image_tc, HEXPREFIX) +
+				LINEEND + "\r\n\r\n";
 		}
 
 		// Generate Map Data Output
 		if(o_tile_map === "checked") {
-			output_buffer += "; Map Data -- \r\n\r\n";
+			output_buffer += COMMENT + " Map Data -- \r\n";
 
 			if(actual_tileData_length < max_map_length) {
-				output_buffer += o_line_label + " ";
+				if (VARUCHAR !== "") {
+					output_buffer += VARUCHAR + "map[] " + ASSIGNMENT + ARRAYBEGIN;
+				}
+				output_buffer += LINEBEGIN + " ";
 
 				for(var i = 0; i < actual_mapData_length; i++) {
-					output_buffer += generateHex(actual_mapData[i])
+					output_buffer += generateHex(actual_mapData[i], HEXPREFIX)
 
 					if(i !== (actual_mapData_length - 1)) {
 						if((i + 1) % 16 !== 0) {
 							output_buffer += ",";
 						} else {
-							output_buffer += "\r\n";
+							output_buffer += ARRAYLINEEND + "\r\n";
 							if(i !== (actual_mapData_length - 1)) {
-								output_buffer += o_line_label + " ";
+								output_buffer += LINEBEGIN + " ";
 							}
 						}
 					} else {
 						output_buffer += "\r\n";
 					}
 				}
+				output_buffer += ARRAYEND;
 			} else {
-				output_buffer += "; ERROR: Too many unique tiles for one tilemap. \r\n";
+				output_buffer += COMMENT + " ERROR: Too many unique tiles for one tilemap. \r\n";
 			}
 
 			output_buffer += "\r\n";
@@ -829,17 +863,22 @@ function generateOutput() {
 		// Generate Tile Data Output
 		if(o_tile_data === "checked") {
 
-			output_buffer += "; Tile Data -- \r\n\r\n";
+			output_buffer += "\r\n" + COMMENT + " Tile Data -- \r\n";
 
+			if (VARUCHAR !== "") {
+				output_buffer += VARUCHAR + "tile[] " + ASSIGNMENT + ARRAYBEGIN;
+			}
 			for(var i = 0; i < actual_tileData_length; i++) {
 
-				output_buffer += o_line_label + " ";
+				output_buffer += LINEBEGIN + " ";
 
 				for(var j = 0; j < 16; j++) {
-					output_buffer += generateHex(actual_tileData[i][j]);
+					output_buffer += generateHex(actual_tileData[i][j], HEXPREFIX);
 
-					if((j + 1) % 16 !== 0) {
+					if ((j + 1) % 16 !== 0) {
 						output_buffer += ",";
+					} else if (i + 1 < actual_tileData_length) {
+						output_buffer += ARRAYLINEEND;
 					}
 				}
 
@@ -847,6 +886,7 @@ function generateOutput() {
 					output_buffer += "\r\n";
 				}
 			}
+			output_buffer += ARRAYEND;
 		}
 
 		// Set Download Link
@@ -878,6 +918,7 @@ function getOptionsValues() {
 	o_tile_map = $("input#tile-map").attr("checked");
 	o_tile_quan = $("input#tile-quantize").attr("checked");
 	o_pad_map = $("input#pad-map").attr("checked");
+	o_c_style = $("input#c-style").attr("checked");
 
 	// Text Inputs
 	o_line_label = $("input#line-label").val().toString();
@@ -910,6 +951,10 @@ function loadOptionsValues() {
 		$("input#pad-map").attr("checked", "checked") : 
 		$("input#pad-map").removeAttr("checked");
 
+	o_c_style === "checked" ?
+		$("input#c-style").attr("checked", "checked") : 
+		$("input#c-style").removeAttr("checked");
+
 	// Text Inputs
 	$("input#line-label").val(o_line_label);
 	$("input#constant-label").val(o_const_label);
@@ -920,14 +965,16 @@ function loadOptionsValues() {
 }
 
 /* -----------------------------------------------------------------------------
- * @function generateHex(_val) Generate a valid hex value from input integer
+ * @function generateHex(_val, _prefix) Generate a valid hex value from input integer
  * 
  * @param	{int} _val Integer to be converted to hex
+ * 
+ * @param	{string} _val Prefix to use for hex values
  * 
  * @return {string} val Valid hex value
  * -------------------------------------------------------------------------- */
 
-function generateHex(_v) {
+function generateHex(_v, _prefix) {
 	var v = _v;
 	var l = v.toString.length + (v.toString.length % 2);
 
@@ -938,7 +985,7 @@ function generateHex(_v) {
 		v = "0" + v;
 	}
 
-	v = o_hex_prefix + v;
+	v = _prefix + v;
 
 	return v;
 }
@@ -962,4 +1009,27 @@ function trimString(_str, _l) {
   	str = str.substr(0, sl) + "..." + str.substr(-sl, sl);
   }
   return str;
+}
+
+/** ----------------------------------------------------------------------------
+ * @function getCVarName(_raw_name) Sanitise name into C variable name
+ * 
+ * @param	{string} _str Raw name we need to format
+ * 
+ * @return {string} str Variable name copmlying with C variable constraints
+ * -------------------------------------------------------------------------- */
+
+function getCVarName(_raw_name) {
+	var raw = _raw_name;
+	var safe_chars = /[a-z_0-9]/i;
+	var safe_name = "";
+	for (var i = 0, len = raw.length; i < len; i++) {
+		if (raw[i] === ".") {
+			break;
+		}
+		if (safe_chars.test(raw[i])) {
+			safe_name += raw[i];
+		}
+	}
+	return safe_name;
 }
