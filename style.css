@@ -20,7 +20,7 @@ input[type="file"]#file-input {
 }
 header {
   display: block;
-  width: 702px;
+  width: 782px;
   margin: 20px auto 10px auto;
   color: #cccccc;
   text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
@@ -58,7 +58,7 @@ div#main-container {
   display: table;
   margin: 0px auto;
   padding: 0px;
-  width: 722px;
+  width: 802px;
   height: 100%;
   min-height: 700px;
   overflow: hidden;
@@ -351,7 +351,7 @@ div#app div#output {
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
-  width: 540px;
+  width: 620px;
   height: 100%;
   margin: 0px 0px 0px 182px;
   background: white;
@@ -389,7 +389,7 @@ div#app div#output div#textarea-container textarea {
   display: block;
   margin: 0px;
   padding: 10px;
-  width: 518px;
+  width: 598px;
   height: 100%;
   background: #e0e0e0;
   font-family: "Lucida Console", monospace;

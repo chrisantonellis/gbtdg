@@ -556,6 +556,8 @@ function optionsRadioButtonsHandler() {
 
 			}
 
+			$("input#hex-prefix").val(o_hex_prefix);
+
 			generateOutput();
 		})
 	})
