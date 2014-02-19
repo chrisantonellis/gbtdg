@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Gameboy Tile Data Generator v1.2.0</title>
-	<link rel="stylesheet" type="text/css" href="style.css" />
+	<title>Gameboy Tile Data Generator v1.3.1</title>
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,600,700" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script src="gbtdg.js"></script>
 </head>
@@ -14,196 +14,237 @@
 <input type="file" accept="image/*" name="image" id="file-input">
 <canvas id="hidden-canvas"></canvas>
 
-<header>
-	<span><img src="img/gameboy-logo.gif" />&trade; Tile Data Generator v1.3.0</span>
-	<a href="#" class="text-page">About &sdot; Instructions</a>
-</header>
+<!-- Main Container -->
+<div id="main-container">
 
-<div id="main">
-
-	<div id="text-page">
-		<div id="content">
-			<h1>About GameBoy&trade; Tile Data Generator</h1>
-			<p>GameBoy&trade; Tile Data Generator is a HTML5 / JS web application that will convert bitmap images to hexidecimal data appropriate for use in tile based graphical applications, specifically Nintendo&reg; Gameboy&trade; (DMG) software. More information about GameBoy&trade; programming can be found <a href="http://www.chrisantonellis.com/gameboy">here</a>. Designed and developed by <a href="http://www.chrisantonellis.com">Chris Antonellis</a> Fall 2012.</p>
-			<h1>Instructions</h1>
-			<p>
-				<ol>
-					<li>Click on <span>Input Image</span> canvas to select an image. Input images are limited to <span>128KB</span> and <span>512px width and height.</span></li>
-					<li>Hex data will be automatically generated under <span>Data Output</span>.</li>
-					<li>Use the <span>Options</span> inputs to alter the output as you require. Data output will be regenerated automatically.</li>
-					<li>Click on the <span>Download Data</span> link in the top right to download the output data as a <span>.inc</span> file.</li>
-				</ol>
-			</p>
-			<h1>Browser Compatibility</h1>
-			<p>
-				<table id="compatibility" cellspacing="0">
-					<tr>
-						<td class="icon"><img src="img/windows.gif" title="Windows XP, 7, 8" /><td>
-						<td class="icon"><img src="img/chrome.gif" title="Google Chrome 22" /><td>
-						<td class="icon"><img src="img/firefox.gif" title="Mozilla Firefox 16" /><td>
-						<td class="icon"><img src="img/opera.gif" title="Opera 12" /><td>
-						<td class="icon"><img class="broken" src="img/safari.gif" title="Safari 5.2"/><td>
-						<td class="icon"><img class="broken" src="img/ie.gif" title="Internet Explorer 9" /><td>
-						<td>
-							<span>Note:</span> Safari 5.2 and IE 9 do not support <a href="http://caniuse.com/#feat=fileapi" target="_blank">HTML5 File API</a> or <a href="http://caniuse.com/filereader" target="_blank">FileReader</a> at this time.
-						</td>
-					</tr>
-					<tr>
-						<td class="icon"><img src="img/osx.gif" title="OSX" /><td>
-						<td class="icon"><img class="broken" src="img/chrome.gif" title="Google Chrome 22" /><td>
-						<td class="icon"><img class="broken" src="img/firefox.gif" title="Mozilla Firefox 16" /><td>
-						<td class="icon"><img class="broken" src="img/opera.gif" title="Opera 12" /><td>
-						<td class="icon"><img class="broken" src="img/safari.gif" title="Safari 6" /><td>
-						<td class="icon"><img class="broken" src="img/ie.gif" title="Internet Explorer 9"/><td>
-						<td>
-							No browser testing has been performed.
-						</td>
-					</tr>
-					<tr>
-						<td class="icon" style="text-align: center;"><img src="img/NewTux.svg" style="width:30px;" title="Linux" /><td>
-						<td class="icon"><img src="img/chrome.gif" title="Google Chrome 22" /><td>
-						<td class="icon"><img src="img/firefox.gif" title="Mozilla Firefox 16" /><td>
-						<td class="icon"><img class="broken" src="img/opera.gif" title="Opera 12" /><td>
-						<td class="icon"><img class="broken" src="img/safari.gif" title="Safari 6" /><td>
-						<td class="icon"><img class="broken" src="img/ie.gif" title="Internet Explorer 9"/><td>
-						<td>
-							Unsupported browsers are not available for Linux.
-						</td>
-					</tr>
-				</table>
-			</p>
-			<a class="text-page" href="#">Close</a>
-		</div>
+	<!-- Header -->
+	<div>
+		<header>
+			<span><img src="img/gameboy-logo.gif" />&trade; Tile Data Generator v1.3.1</span>
+			<a href="#" class="text-page">Instructions</a>
+		</header>
 	</div>
 
-	<!-- Advanced Options Control -->
-	<a id="advanced-control" href="#">Show Advanced Options</a>
-	<form id="input" action="#" method="POST" enctype="multipart/form-data">
-		<!-- Advanced Options -->
-		<div id="advanced-options">
-			<h1>Advanced Options</h1>
-			<ul id="options">
-				<!-- Line Label -->
-				<li>
-					<label class="label" for="line-label">
-						<span>Line Label</span>
-						<div class="text-input"><input type="text" id="line-label" maxlength="6"></div>
-						<p>Characters at beginning of line to denote static data.</p>
-					</label>
-				</li>
-				<!-- Constant Label -->
-				<li>
-					<label class="label" for="constant-label">
-						<span>Constant Label</span>
-						<div class="text-input"><input type="text" id="constant-label" maxlength="12"></div>
-						<p>Command to define a constant.</p>
-					</label>
-				</li>
-				<!-- Hex Prefix -->
-				<li>
-					<label class="label" for="hex-prefix">
-						<span>Hex Prefix</span>
-						<div class="text-input"><input type="text" id="hex-prefix" maxlength="2"></div>
-						<p>Character to appear before a hexidecimal value.</p>
-					</label>
-				</li>
-				<!-- Pad Map Data Values -->
-				<li>
-					<label class="label" for="nothing">
-						<span>Pad Map Data Values</span>
-						<label class="pad-value" id="pad-width">
-							W<div class="text-input"><input type="text" id="pad-map-width" class="pad-value"  maxlength="2" pattern="[0-9]" ></div>
-						</label>
-						<label class="pad-value" id="pad-height">
-							H<div class="text-input"><input type="text" id="pad-map-height" class="pad-value"  maxlength="2"></div>
-						</label>
-						<label class="pad-value" id="pad-height">
-							V<div class="text-input"><input type="text" id="pad-map-value" class="pad-value"  maxlength="2"></div>
-						</label>
-						<p>If 'Pad Map Data' is enabled, map data will be padded to the above width (W) and height (H) values with the above hex value (V).</p>
-					</label>
-				</li>
-				<!-- C Static Include -->
-				<li>
-					<label class="label" for="c-style">
-						<input type="checkbox" name="c-style" id="c-style"/>
-						C Style Static Include
-					</label>
-					<label class="label" for="nothing">
-						<p>Data will be formated such that it can be copy and
-						pasted into a C header file for static compilation.</p>
-					</label>
-				</li>
-			</ul>
-		</div>
-		<!-- Input Image -->
-		<h1>Input Image</h1>
-		<figure>
-			<canvas id="canvas" width="160" height="144"></canvas>
-		</figure>
-		<!-- Image Attributes -->
-		<h1>Image Attributes</h1>
-		<ul id="attributes">
-			<li>
-				<span class="title">Name:</span>
-				<span id="att-name"></span>
-			</li>
-			<li>
-				<span class="title">Filesize:</span>
-				<span id="att-filesize">0 kb</span>
-			</li>
-			<li>
-				<span class="title">Width:</span>
-				<span id="att-width">0 px</span>
-			</li>
-			<li>
-				<span class="title">Height:</span>
-				<span id="att-height">0 px</span>
-			</li>
-		</ul>
-		<!-- Output Options -->
-		<h1>Output Options</h1>
-		<ul id="options">
-			<li>
-				<label class="label" for="tile-data">
-					<input type="checkbox" name="tile-data" id="tile-data" checked="checked" />
-				Generate Tile Data</label>
-			</li>
-			<li>
-				<label class="label" for="tile-map">
-					<input type="checkbox" name="tile-map" id="tile-map" checked="checked" />
-				Generate Tile Map</label>
-			</li>
-			<li>
-				<label class="label" for="tile-quantize">
-					<input type="checkbox" name="tile-quantize" id="tile-quantize" checked="checked" />
-				Tile Quantization</label>
-			</li>
-			<li>
-				<label class="label" for="pad-map">
-					<input type="checkbox" name="pad-map" id="pad-map" />
-				Pad Map Data</label>
-			</li>
-		</ul>
-	</form>
-	<!-- Output -->
-	<div id="output">
-		<a id="download" href="#">Download Data</a>
-		<h1>Data Output</h1>
-		<div id="textarea-container">
-			<textarea id="textarea" spellcheck="false">   __________ __________  ______
+	<!-- Application -->
+	<div id="app-container">
+		<div id="app">
+			<div id="text-page">
+				<div id="content">
+
+					<h1>About GameBoy&trade; Tile Data Generator</h1>
+
+					<p>GameBoy&trade; Tile Data Generator is a HTML5 / JS web application that will convert bitmap images to hexidecimal data appropriate for use in tile based graphical applications, specifically Nintendo&reg; Gameboy&trade; (DMG) software. More information about GameBoy&trade; programming can be found <a href="http://www.chrisantonellis.com/gameboy">here</a>. Designed and developed by <a href="http://www.chrisantonellis.com">Chris Antonellis</a> Fall 2012.</p>
+
+					<h1>Instructions</h1>
+					<p>
+						<ol>
+							<li>Click on <span>Input Image</span> canvas to select an image. Input images are limited to <span>128KB</span> and <span>512px width and height.</span></li>
+							<li>Hex data will be automatically generated under <span>Data Output</span>.</li>
+							<li>Use the <span>Options</span> inputs to alter the output as you require. Data output will be regenerated automatically.</li>
+							<li>Click on the <span>Download Data</span> link in the top right to download the output data as a <span>.inc</span> file.</li>
+						</ol>
+					</p>
+
+					<h1>Browser Compatibility</h1>
+					<p>
+						<table id="compatibility" cellspacing="0">
+							<tr>
+								<td class="icon"><img src="img/windows.gif" title="Windows XP, 7, 8" /><td>
+								<td class="icon"><img src="img/chrome.gif" title="Google Chrome 22" /><td>
+								<td class="icon"><img src="img/firefox.gif" title="Mozilla Firefox 16" /><td>
+								<td class="icon"><img src="img/opera.gif" title="Opera 12" /><td>
+								<td class="icon"><img class="broken" src="img/safari.gif" title="Safari 5.2"/><td>
+								<td class="icon"><img class="broken" src="img/ie.gif" title="Internet Explorer 9" /><td>
+								<td>
+									<span>Note:</span> Safari 5.2 and IE 9 do not support <a href="http://caniuse.com/#feat=fileapi" target="_blank">HTML5 File API</a> or <a href="http://caniuse.com/filereader" target="_blank">FileReader</a> at this time.
+								</td>
+							</tr>
+							<tr>
+								<td class="icon"><img src="img/osx.gif" title="OSX" /><td>
+								<td class="icon"><img class="broken" src="img/chrome.gif" title="Google Chrome 22" /><td>
+								<td class="icon"><img class="broken" src="img/firefox.gif" title="Mozilla Firefox 16" /><td>
+								<td class="icon"><img class="broken" src="img/opera.gif" title="Opera 12" /><td>
+								<td class="icon"><img class="broken" src="img/safari.gif" title="Safari 6" /><td>
+								<td class="icon"><img class="broken" src="img/ie.gif" title="Internet Explorer 9"/><td>
+								<td>
+									No browser testing has been performed.
+								</td>
+							</tr>
+							<tr>
+								<td class="icon" style="text-align: center;"><img src="img/NewTux.svg" style="width:30px;" title="Linux" /><td>
+								<td class="icon"><img src="img/chrome.gif" title="Google Chrome 22" /><td>
+								<td class="icon"><img src="img/firefox.gif" title="Mozilla Firefox 16" /><td>
+								<td class="icon"><img class="broken" src="img/opera.gif" title="Opera 12" /><td>
+								<td class="icon"><img class="broken" src="img/safari.gif" title="Safari 6" /><td>
+								<td class="icon"><img class="broken" src="img/ie.gif" title="Internet Explorer 9"/><td>
+								<td>
+									Unsupported browsers are not available for Linux.
+								</td>
+							</tr>
+						</table>
+					</p>
+
+					<a class="text-page" href="#">Close</a>
+
+				</div>
+			</div>
+
+			<!-- Advanced Options Control -->
+			
+			<a id="advanced-control" href="#">Show Advanced Options</a>
+
+			<form id="input" action="#" method="POST" enctype="multipart/form-data">
+
+				<div id="advanced-options">
+					<h1>Advanced Options</h1>
+					<ul id="options">
+
+						<!--
+						<li>
+							<label class="label" for="line-label">
+								<span>Line Label</span>
+								<div class="text-input"><input type="text" id="line-label" maxlength="6"></div>
+								<p>Characters at beginning of line to denote static data.</p>
+							</label>
+						</li>
+
+						<li>
+							<label class="label" for="constant-label">
+								<span>Constant Label</span>
+								<div class="text-input"><input type="text" id="constant-label" maxlength="12"></div>
+								<p>Command to define a constant.</p>
+							</label>
+						</li>
+						-->
+
+						<li>
+							<label class="label" for="hex-prefix">
+								<span>Hex Prefix</span>
+								<div class="text-input"><input type="text" id="hex-prefix" maxlength="2"></div>
+								<p>Character to appear before a hexidecimal value.</p>
+							</label>
+						</li>
+
+						<li>
+							<label class="label" for="nothing">
+								<span>Pad Map Data Values</span>
+								<label class="pad-value" id="pad-width">
+									W<div class="text-input"><input type="text" id="pad-map-width" class="pad-value"  maxlength="2" pattern="[0-9]" ></div>
+								</label>
+								<label class="pad-value" id="pad-height">
+									H<div class="text-input"><input type="text" id="pad-map-height" class="pad-value"  maxlength="2"></div>
+								</label>
+								<label class="pad-value" id="pad-height">
+									V<div class="text-input"><input type="text" id="pad-map-value" class="pad-value"  maxlength="2"></div>
+								</label>
+								<p>If 'Pad Map Data' is enabled, map data will be padded to the above width (W) and height (H) values with the above hex value (V).</p>
+							</label>
+						</li>
+
+					</ul>
+				</div>
+
+				<!-- Input Image -->
+				<h1>Input Image</h1>
+				<figure>
+					<canvas id="canvas" width="160" height="144"></canvas>
+				</figure>
+
+				<!-- Image Attributes -->
+				<h1>Image Attributes</h1>
+				<ul id="attributes">
+					<li>
+						<span class="title">Name:</span>
+						<span id="att-name"></span>
+					</li>
+					<li>
+						<span class="title">Filesize:</span>
+						<span id="att-filesize">0 kb</span>
+					</li>
+					<li>
+						<span class="title">Width:</span>
+						<span id="att-width">0 px</span>
+					</li>
+					<li>
+						<span class="title">Height:</span>
+						<span id="att-height">0 px</span>
+					</li>
+				</ul>
+
+				<!-- Data Generation -->
+				<h1>Data Generation</h1>
+				<ul id="options">
+					<li>
+						<label class="label" for="tile-data">
+							<input type="checkbox" name="tile-data" id="tile-data" checked="checked" />
+						Generate Tile Data</label>
+					</li>
+					<li>
+						<label class="label" for="tile-map">
+							<input type="checkbox" name="tile-map" id="tile-map" checked="checked" />
+						Generate Tile Map</label>
+					</li>
+					<li>
+						<label class="label" for="tile-quantize">
+							<input type="checkbox" name="tile-quantize" id="tile-quantize" checked="checked" />
+						Tile Quantization</label>
+					</li>
+					<li>
+						<label class="label" for="pad-map">
+							<input type="checkbox" name="pad-map" id="pad-map" />
+						Pad Map Data</label>
+					</li>
+				</ul>
+
+				<!-- Formatting -->
+				<h1>Formatting</h1>
+				<ul id="options">
+					<li>
+						<label class="label" for="asm-format">
+							<input type="radio" name="format" id="asm-format" checked />
+						ASM Format (RGBDS)</label>
+					</li>
+					<li>
+						<label class="label" for="c-format">
+							<input type="radio" name="format" id="c-format" />
+						C Format (GBDK)</label>
+					</li>
+				</ul>
+			</form>
+
+			<!-- Output -->
+			<div id="output">
+
+				<div id="output-header">
+					<a id="download" href="#">Download Data</a>
+					<h1>Data Output</h1>
+				</div>
+
+				<div>
+					<div id="textarea-container">
+						<textarea id="textarea" spellcheck="false">   __________ __________  ______
   / ____/ __ /_  __/ __ \/ ____/
  / / __/ __  |/ / / / / / / __  
 / /_/ / /_/ // / / /_/ / /_/ /  
 \____/_____//_/ /_____/\____/</textarea>
+					</div>
+				</div>
+
+			</div>
+
 		</div>
 	</div>
+
+	<!-- Footer -->
+	<div>
+		<footer>
+			<span>
+				Nintendo&reg; GameBoy&trade; and <img src="img/gameboy-logo-small.gif" />&trade; are registered trademarks of Nintendo&reg; Inc.<br />
+				v1.3.1 &sdot; <a href="http://chrisantonellis.com">Chris Antonellis</a> &sdot; <a href="https://github.com/chrisantonellis/gbtdg/">GitHub</a>
+			</span>
+		</footer>
+	</div>
+
 </div>
-<footer>
-	<span>
-		Nintendo&reg; GameBoy&trade; and <img src="img/gameboy-logo-small.gif" />&trade; are registered trademarks of Nintendo&reg; Inc.<br />
-		v1.3.0 &sdot; <a href="http://chrisantonellis.com">Chris Antonellis</a> &sdot; <a href="https://github.com/chrisantonellis/gbtdg/">GitHub</a> &sdot; <a href="readme.md">readme.md</a>
-	</span>
-</footer>
 </body>
 </html>

@@ -1,9 +1,9 @@
 
 /* -----------------------------------------------------------------------------
  * Gameboy Tile Data Generator
- * gbtdg.js v1.3.0
+ * gbtdg.js v1.3.1
  * 2014 Chris Antonellis
- 
+ *
  * GameBoy Tile Data Generator is a HTML5 / JS web application that will convert
  * bitmap images to hexidecimal data appropriate for use in tile based
  * graphical applications, specifically Nintendo Gameboy (DMG) software.
@@ -17,54 +17,79 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-// Variables                                                                  //
+// Constants                                                                  //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
-var max_filesize = 128 * 1024; // 128KB
+// Input File
+var max_filesize = 128 * 1024;
 var max_width = 512;
 var max_height = 512;
 var max_map_length = 256;
 
-var tile_pw = 8; // Tile Pixel Width
-var tile_ph = 8; // Tile Pixel Height
+// Gameboy
+var tile_pw = 8;
+var tile_ph = 8;
+var canvas_width = 160;
+var canvas_height	= 144;
 
-var canvas_width = 160; // Visible Canvas Pixel Width
-var canvas_height	= 144; // Visible Canvas Pixel Height
-
+// GBTDG
 var advanced_options_text_show = "Show Advanced Options";
 var advanced_options_text_hide = "Hide Advanced Options";
 var advanced_options_duration = 300;
-
 var text_page_duration = 200;
 
-// Input Option Values
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Variables                                                                  //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// Input File
+var file_name;
+var file_name_clean;
+var file_size;
+
+var image_pw;	// Pixel Width
+var image_ph;	// Pixel Height
+var image_pc;	// Pixel Count
+
+var image_tw;	// Tile Width
+var image_th;	// Tile Height
+var image_tc;	// Tile Count
+
+// Data Generation Options
 var o_tile_data	= "checked";
 var o_tile_map = "checked";
 var o_tile_quan	= "checked";
 var o_pad_map = null;
+var o_asm_format = "checked";
+var o_c_format = null;
 
-var o_line_label = "DB";
-var o_const_label = "EQU";
+var o_c_style = null;
+
+// Output Generation Options
+var o_comment = "; ";
+var o_line_begin = "DB ";
+var o_line_end = "";
 var o_hex_prefix = "$";
+var o_var_equals = "EQU";
+var o_var_char = "";
+var o_var_int = "";
+var o_array_begin = "";
+var o_array_end = "";
+var o_array_line_end = "";
+
+// Pad Map Data Options
 var o_pad_map_w = "32";
 var o_pad_map_h = "32";
 var o_pad_map_v = "00";
-var o_c_style = "unchecked";
 
-var file_name;
-var file_size;
-
+// Output File
 var download_ext = ".inc";
 
-var image_pw;	// Input Image Pixel Width
-var image_ph;	// Input Image Pixel Height
-var image_pc;	// Input Image Pixel Count
-var image_tw;	// Input Image Tile Width
-var image_th;	// Input Image Tile Height
-var image_tc;	// Input Image Tile Count
-
-var output_buffer = "";	// Output Buffer
+// Output Buffer
+var output_buffer = "";
 
 // Global Arrays
 var tileData = [];
@@ -91,9 +116,10 @@ $(document).ready(function() {
 	textPageHandler();
 	optionsCheckboxesHandler();
 	optionsTextInputsHandler();
+	optionsRadioButtonsHandler();
 	advancedOptionsControl();
 
-	// Load options values from cookie
+	// Load default options values into input elements
 	loadOptionsValues();
 
 	// Load first image into visible canvas
@@ -110,7 +136,6 @@ $(document).ready(function() {
 ////////////////////////////////////////////////////////////////////////////////
 
 	$("input#file-input").change(function() {
-
 		var fileList = this.files;
 
 		// Error check: File input changed but no image selected
@@ -126,9 +151,7 @@ $(document).ready(function() {
 		}
 	
 		// Load Image
-
 		file_reader.readAsDataURL(fileList[0]);
-
 		file_reader.onload = function (e) {
 
 			var hidden_img = new Image();
@@ -138,22 +161,21 @@ $(document).ready(function() {
 
 				// Error check: Pixel dimensions
 		  	if(hidden_img.width > max_width || hidden_img.height > max_height) {
-					alert("Image dimensions are too large.\n" + "Maximum width is " +
+					alert("Image dimensions are too large.\nMaximum width is " + 
 						max_width + "px and maximum height is " + max_height + "px.");
 					return;
 				}
 
-				/** --------------------------------------------------------------------
-				 * No errors, program can continue
-				 * ------------------------------------------------------------------ */
+				// No input file errors, program can continue
 
 				// Reset Global Arrays
 				tileData = [];
-				mapData  = [];
+				mapData = [];
 				warnings = [];
 
 				// Save filename for future use
 				file_name = fileList[0].name;
+				file_name_clean = cleanString(file_name);
 
 				// Save file size for future use
 				file_size = parseInt(fileList[0].size);
@@ -164,7 +186,7 @@ $(document).ready(function() {
 				$("span#att-width").html(hidden_img.width.toString() + "px");
 				$("span#att-height").html(hidden_img.height.toString() + "px");
 
-				// Define image dimensions
+				// Define image dimensions ---------------------------------------------
 
 				// Image Pixel Width
 				if(hidden_img.width % tile_pw !== 0) {
@@ -194,7 +216,7 @@ $(document).ready(function() {
 				// Image Total Tile Count 
 				image_tc = image_tw * image_th;
 
-				// Place image on hidden canvas
+				// Place image on hidden canvas ----------------------------------------
 
 				// Set Hidden Canvas Width and Height
 				$("canvas#hidden-canvas")[0].width = image_pw;
@@ -207,7 +229,8 @@ $(document).ready(function() {
 				// Draw Image on Hidden Canvas
 		    hidden_canvas_context.drawImage(hidden_img, 0, 0);
 
-		    // Get Image Pixel Data
+		    // Get Image Pixel Data ------------------------------------------------
+		    
 				var imageData = hidden_canvas_context.getImageData(0, 0, image_pw, image_ph);
 
 				var pixelData = [];
@@ -253,7 +276,7 @@ $(document).ready(function() {
 						}
 
 				    // Save Greyscale RGB Data
-				    imageData.data[index]     = new_val;
+				    imageData.data[index] = new_val;
 				    imageData.data[index + 1] = new_val;
 				    imageData.data[index + 2] = new_val;
 				  }
@@ -262,7 +285,8 @@ $(document).ready(function() {
 				// Apply Greyscale Image to Hidden Canvas
 				hidden_canvas_context.putImageData(imageData, 0, 0);
 
-				// Generate Tile Data
+				// Generate Tile Data --------------------------------------------------
+				
 				for(var y_tile = 0; y_tile < image_th; y_tile++) {
 				  for(var x_tile = 0; x_tile < image_tw; x_tile++) {
 
@@ -301,10 +325,12 @@ $(document).ready(function() {
 				  }
 				}
 
-				// Generate and Display Output
+				// Generate and Display Output -----------------------------------------
+				
 				generateOutput();
 
-				// Apply Image to Visible Canvas
+				// Apply Image to Visible Canvas ---------------------------------------
+				
 		    var image = new Image();
 		    image.src = $("canvas#hidden-canvas")[0].toDataURL();
 
@@ -444,7 +470,7 @@ function advancedOptionsControl() {
 
 				$(this).html(advanced_options_text_show);
 
-				$("div#main").unbind("click");
+				$("div#app-container").unbind("click");
 				$("html").unbind("click");
 			} else {
 				animating = true;
@@ -456,7 +482,7 @@ function advancedOptionsControl() {
 
 	      $(this).html(advanced_options_text_hide);
 
-				$("div#main").click(function(e) {
+				$("div#app-container").click(function(e) {
 					e.stopPropagation();
 				});
 
@@ -474,8 +500,10 @@ function advancedOptionsControl() {
 
 function optionsCheckboxesHandler() {
 
-	var checkboxes = $("input#tile-data").add($("input#tile-map"))
-		.add($("input#tile-quantize")).add($("input#pad-map"))
+	var checkboxes = $("input#tile-data")
+		.add($("input#tile-map"))
+		.add($("input#tile-quantize"))
+		.add($("input#pad-map"))
 		.add($("input#c-style"));
 
 	$.each(checkboxes, function(){
@@ -486,15 +514,67 @@ function optionsCheckboxesHandler() {
 }
 
 /** ----------------------------------------------------------------------------
+ * function optionsRadioButtonsHandler() Attaches event handlers to radio buttons
+ * -------------------------------------------------------------------------- */
+
+function optionsRadioButtonsHandler() {
+
+	var radio_buttons = $("input#asm-format")
+		.add($("input#c-format"));
+
+	$.each(radio_buttons, function() {
+		$(this).click(function() {
+
+			o_asm_format = $("input#asm-format").attr("checked");
+			o_c_format = $("input#c-format").attr("checked");
+
+			if(o_asm_format === "checked") {	
+
+				o_comment = "; ";
+				o_line_begin = "DB ";
+				o_line_end = "";
+				o_hex_prefix = "$";
+				o_var_equals = "EQU";
+				o_var_char = "";
+				o_var_int = "";
+				o_array_begin = "";
+				o_array_end = "";
+				o_array_line_end = "";
+
+			} else if (o_c_format === "checked") {
+
+				o_comment = "// ";
+				o_line_begin = "  ";
+				o_line_end = ";";
+				o_hex_prefix = "0x";
+				o_var_equals = "=";
+				o_var_char = "const unsigned char ";
+				o_var_int = "const int ";
+				o_array_begin = "{\r\n";
+				o_array_end = "};\r\n";
+				o_array_line_end = ",";
+
+			}
+
+			generateOutput();
+		})
+	})
+}
+
+/** ----------------------------------------------------------------------------
  * @function optionsTextInputsHandler() Attaches event handlers to text inputs
  * -------------------------------------------------------------------------- */
 
 function optionsTextInputsHandler() {
-	var textInputs = $("input#line-label").add($("input#constant-label"))
-		.add($("input#hex-prefix")).add($("input#pad-map-width"))
-		.add($("input#pad-map-height")).add($("input#pad-map-value"));
+	var textInputs = $("input#line-label")
+		.add($("input#constant-label"))
+		.add($("input#hex-prefix"))
+		.add($("input#pad-map-width"))
+		.add($("input#pad-map-height"))
+		.add($("input#pad-map-value"));
 
-	var decimalInputs	= $("input#pad-map-width").add($("input#pad-map-height"));
+	var decimalInputs	= $("input#pad-map-width")
+		.add($("input#pad-map-height"));
 
 	var hexInputs = $("input#pad-map-value");
 
@@ -546,7 +626,7 @@ function optionsTextInputsHandler() {
 		});
 	});
 
-	// Hex Inputs ---
+	// Hex Inputs
 	$.each(hexInputs, function(){
 		// Use CSS to force only uppercase input
 		$(this).css("text-transform", "uppercase");
@@ -685,79 +765,50 @@ function generateOutput() {
 		var actual_mapData;
 		var actual_mapData_length;
 
-
 		// Get Options Values
     getOptionsValues();
-
-		// Constants
-		var COMMENT = ";";
-		var ASSIGNMENT = o_const_label;
-		var HEXPREFIX = o_hex_prefix;
-		var LINEEND = "";
-		var LINEBEGIN = o_line_label;
-		var VARUCHAR = "";
-		var VARINT = "";
-		var ARRAYBEGIN = "";
-		var ARRAYEND = "";
-		var ARRAYLINEEND = "";
-
-		if (o_c_style === "checked") {
-			COMMENT = "//";
-			ASSIGNMENT = "=";
-			HEXPREFIX = "0x";
-			LINEEND = ";";
-			LINEBEGIN = " ";
-			var VARNAME = "bitmap_"
-				+ getCVarName(file_name) + "_";
-			VARUCHAR = "const unsigned char " + VARNAME;
-			VARINT = "const int " + VARNAME;
-			ARRAYBEGIN = " {\n";
-			ARRAYEND = "};";
-			ARRAYLINEEND = ",";
-		}
 
 		// Clear Output Buffer
 		output_buffer = "";
 
-		output_buffer += COMMENT + " Input Image Attributes --" +
-			"\r\n\r\n" +
-			COMMENT + " Filename: " +
-			"\t" +
-			file_name +
-			"\r\n" +
-			COMMENT + " Pixel Width:" +
-			"\t" +
-			image_pw +
-			"px\r\n" +
-			COMMENT + " Pixel Height:" +
-			"\t" +
-			image_ph +
-			"px\r\n\r\n";
+		output_buffer += 
+			o_comment + "///////////////////////\r\n" +
+			o_comment + "//                   //\r\n" +
+			o_comment + "//  File Attributes  //\r\n" +
+			o_comment + "//                   //\r\n" +
+			o_comment + "///////////////////////\r\n\r\n" +
+			o_comment + "Filename: " + file_name + "\r\n" +
+			o_comment + "Pixel Width: " + image_pw + "px\r\n" +
+			o_comment + "Pixel Height: " + image_ph + "px\r\n\r\n";
 
 		// Include Warnings
 		if(warnings.length > 0) {
 			for(i = 0; i < warnings.length; i++) {
-				output_buffer += COMMENT + " " + warnings[i] + "\r\n";
+				output_buffer += o_comment + warnings[i] + "\r\n";
 			}
 			output_buffer += "\r\n";
 		}
 
 		// Determine what data to show
 		if(o_tile_quan === "checked") {
-
 			actual_tileData = quantizeTileData();
 			actual_tileData_length = actual_tileData.length;
-
 			actual_mapData = generateMapData(actual_tileData);
 			actual_mapData_length = actual_mapData.length;
-
 		} else {
-
 			actual_tileData = tileData;
 			actual_tileData_length = tileData.length;
-
 			actual_mapData = mapData;
 			actual_mapData_length = mapData.length;
+		}
+
+		if(o_tile_map === "checked" || o_tile_data === "checked") {
+			output_buffer += 
+				o_comment + "/////////////////\r\n" +
+				o_comment + "//             //\r\n" +
+				o_comment + "//  Constants  //\r\n" +
+				o_comment + "//             //\r\n" +
+				o_comment + "/////////////////\r\n\r\n";
 		}
 
 		// Generate Map Data Constants Output
@@ -768,117 +819,107 @@ function generateOutput() {
 				var actual_tile_height;
 
 				if(o_pad_map === "checked") {
-
-					actual_tile_width  = generateHex(o_pad_map_w, HEXPREFIX);
-					actual_tile_height = generateHex(o_pad_map_h, HEXPREFIX);
-
+					actual_tile_width  = generateHex(o_pad_map_w, o_hex_prefix);
+					actual_tile_height = generateHex(o_pad_map_h, o_hex_prefix);
 				} else {
-
-					actual_tile_width  = generateHex(image_tw, HEXPREFIX);
-					actual_tile_height = generateHex(image_th, HEXPREFIX);
-
+					actual_tile_width  = generateHex(image_tw, o_hex_prefix);
+					actual_tile_height = generateHex(image_th, o_hex_prefix);
 				}
 
-				output_buffer += COMMENT + " Map Data Constants --" +
-					"\r\n" +
-
-					VARINT + "tile_map_size" +
-					"\t" +
-					ASSIGNMENT +
-					" " +
-					generateHex(actual_mapData_length, HEXPREFIX) +
-					LINEEND + "\r\n" +
-
-					VARINT + "tile_map_width" +
-					"\t" +
-					ASSIGNMENT +
-					" " +
-					actual_tile_width +
-					LINEEND + "\r\n" +
-
-					VARINT + "tile_map_height" +
-					"\t" +
-					ASSIGNMENT +
-					" " +
-					actual_tile_height +
-					LINEEND + "\r\n\r\n";
+				output_buffer += 
+					o_var_int + file_name_clean + "_tile_map_size " + o_var_equals + " " +
+					generateHex(actual_mapData_length, o_hex_prefix) + 
+					o_line_end + "\r\n" +
+					o_var_int + file_name_clean + "_tile_map_width " + o_var_equals + " " +
+					actual_tile_width + o_line_end + "\r\n" +
+					o_var_int + file_name_clean + "_tile_map_height " + o_var_equals + " " +
+					actual_tile_height + o_line_end + "\r\n\r\n";
 			}
 		}
 
 		// Generate Tile Data Constants Output
 		if(o_tile_data === "checked") {
-
-			output_buffer += "\r\n" + COMMENT + " Tile Data Constants --" +
-				"\r\n" +
-
-				VARINT + "tile_data_size" +
-				"\t" +
-				ASSIGNMENT +
-				" " +
-				generateHex(actual_tileData_length * 16, HEXPREFIX)  +
-				LINEEND + "\r\n" +
-
-				VARINT + "tile_count" +
-				"\t" +
-				ASSIGNMENT +
-				" " +
-				generateHex(image_tc, HEXPREFIX) +
-				LINEEND + "\r\n\r\n";
+			output_buffer += 
+				o_var_int + file_name_clean + "_tile_data_size " + o_var_equals + " " +
+				generateHex(actual_tileData_length * 16, o_hex_prefix)  +
+				o_line_end + "\r\n" +
+				o_var_int + file_name_clean + "_tile_count " + o_var_equals + " " +
+				generateHex(image_tc, o_hex_prefix) +
+				o_line_end + "\r\n\r\n";
 		}
 
 		// Generate Map Data Output
 		if(o_tile_map === "checked") {
-			output_buffer += COMMENT + " Map Data -- \r\n";
+
+			output_buffer +=
+				o_comment + "////////////////\r\n" +
+				o_comment + "//            //\r\n" +
+				o_comment + "//  Map Data  //\r\n" +
+				o_comment + "//            //\r\n" +
+				o_comment + "////////////////\r\n\r\n";
 
 			if(actual_tileData_length < max_map_length) {
-				if (VARUCHAR !== "") {
-					output_buffer += VARUCHAR + "map[] " + ASSIGNMENT + ARRAYBEGIN;
+
+				if(o_asm_format == "checked") {
+					output_buffer += file_name_clean + "_map_data:\r\n";
+				} else if (o_c_format == "checked") {
+					output_buffer += o_var_char + file_name_clean + "_map_data[] " + o_var_equals + o_array_begin;
 				}
-				output_buffer += LINEBEGIN + " ";
+
+				output_buffer += o_line_begin;
 
 				for(var i = 0; i < actual_mapData_length; i++) {
-					output_buffer += generateHex(actual_mapData[i], HEXPREFIX)
+					output_buffer += generateHex(actual_mapData[i], o_hex_prefix);
 
 					if(i !== (actual_mapData_length - 1)) {
 						if((i + 1) % 16 !== 0) {
 							output_buffer += ",";
 						} else {
-							output_buffer += ARRAYLINEEND + "\r\n";
+							output_buffer += o_array_line_end + "\r\n";
 							if(i !== (actual_mapData_length - 1)) {
-								output_buffer += LINEBEGIN + " ";
+								output_buffer += o_line_begin;
 							}
 						}
 					} else {
 						output_buffer += "\r\n";
 					}
 				}
-				output_buffer += ARRAYEND;
-			} else {
-				output_buffer += COMMENT + " ERROR: Too many unique tiles for one tilemap. \r\n";
-			}
+				output_buffer += o_array_end;
 
+			// Too many unique tiles for one tilemap
+			} else {
+				output_buffer += o_comment + "ERROR: Too many unique tiles for one tilemap. \r\n";
+			}
 			output_buffer += "\r\n";
 		}
 
 		// Generate Tile Data Output
 		if(o_tile_data === "checked") {
 
-			output_buffer += "\r\n" + COMMENT + " Tile Data -- \r\n";
+			output_buffer +=
+				o_comment + "/////////////////\r\n" +
+				o_comment + "//             //\r\n" +
+				o_comment + "//  Tile Data  //\r\n" +
+				o_comment + "//             //\r\n" +
+				o_comment + "/////////////////\r\n\r\n";
 
-			if (VARUCHAR !== "") {
-				output_buffer += VARUCHAR + "tile[] " + ASSIGNMENT + ARRAYBEGIN;
+			if(o_asm_format) {
+				output_buffer += file_name_clean + "_tile_data:\r\n";
+			} else if (o_c_format) {
+				output_buffer += o_var_char + file_name_clean + "_tile_data[] " + o_var_equals + o_array_begin;
 			}
+
 			for(var i = 0; i < actual_tileData_length; i++) {
 
-				output_buffer += LINEBEGIN + " ";
+				output_buffer += o_line_begin;
 
 				for(var j = 0; j < 16; j++) {
-					output_buffer += generateHex(actual_tileData[i][j], HEXPREFIX);
+					output_buffer += generateHex(actual_tileData[i][j], o_hex_prefix);
 
 					if ((j + 1) % 16 !== 0) {
 						output_buffer += ",";
 					} else if (i + 1 < actual_tileData_length) {
-						output_buffer += ARRAYLINEEND;
+						output_buffer += o_array_line_end;
 					}
 				}
 
@@ -886,7 +927,7 @@ function generateOutput() {
 					output_buffer += "\r\n";
 				}
 			}
-			output_buffer += ARRAYEND;
+			output_buffer += o_array_end;
 		}
 
 		// Set Download Link
@@ -895,7 +936,8 @@ function generateOutput() {
 		file_name_temp = file_name_temp.join().toString();
 
 		var download_name = file_name_temp;
-		if (o_c_style === "checked") {
+
+		if (o_c_format === "checked") {
 			download_name += ".h";
 		} else {
 			download_name += download_ext;
@@ -924,11 +966,10 @@ function getOptionsValues() {
 	o_tile_map = $("input#tile-map").attr("checked");
 	o_tile_quan = $("input#tile-quantize").attr("checked");
 	o_pad_map = $("input#pad-map").attr("checked");
-	o_c_style = $("input#c-style").attr("checked");
 
 	// Text Inputs
-	o_line_label = $("input#line-label").val().toString();
-	o_const_label = $("input#constant-label").val().toString();
+	// o_line_begin = $("input#line-label").val().toString();
+	// o_const_label = $("input#constant-label").val().toString();
 	o_hex_prefix = $("input#hex-prefix").val().toString();
 	o_pad_map_w = parseInt($("input#pad-map-width").val());
 	o_pad_map_h = parseInt($("input#pad-map-height").val());
@@ -957,13 +998,17 @@ function loadOptionsValues() {
 		$("input#pad-map").attr("checked", "checked") : 
 		$("input#pad-map").removeAttr("checked");
 
-	o_c_style === "checked" ?
-		$("input#c-style").attr("checked", "checked") : 
-		$("input#c-style").removeAttr("checked");
+	o_asm_format === "checked" ?
+		$("input#asm-format").attr("checked", "checked") : 
+		$("input#asm-format").removeAttr("checked");
+
+	o_c_format === "checked" ?
+		$("input#c-format").attr("checked", "checked") : 
+		$("input#c-format").removeAttr("checked");
 
 	// Text Inputs
-	$("input#line-label").val(o_line_label);
-	$("input#constant-label").val(o_const_label);
+	// $("input#line-label").val(o_line_begin);
+	// $("input#constant-label").val(o_var_equals);
 	$("input#hex-prefix").val(o_hex_prefix);
 	$("input#pad-map-width").val(o_pad_map_w);
 	$("input#pad-map-height").val(o_pad_map_h);
@@ -972,44 +1017,34 @@ function loadOptionsValues() {
 
 /* -----------------------------------------------------------------------------
  * @function generateHex(_val, _prefix) Generate a valid hex value from input integer
- * 
  * @param	{int} _val Integer to be converted to hex
- * 
  * @param	{string} _val Prefix to use for hex values
- * 
  * @return {string} val Valid hex value
  * -------------------------------------------------------------------------- */
 
 function generateHex(_v, _prefix) {
 	var v = _v;
 	var l = v.toString.length + (v.toString.length % 2);
-
 	v = v.toString(16);
 	v = v.toUpperCase();
-
-	while(v.length < l) {
+	if(v.length == 1 || v.length == 3) {
 		v = "0" + v;
 	}
-
 	v = _prefix + v;
-
 	return v;
 }
 
 /** ----------------------------------------------------------------------------
  * @function trimString(_str, _l) Trim a string to the specified length and 
  *           represent removed characters with elipsis.
- * 
  * @param	{string} _str String to trim
  * @param {int}	_l Max length for input string before being trimmed
- * 
  * @return {string} str Trimmed string
  * -------------------------------------------------------------------------- */
 
 function trimString(_str, _l) {
 	var str = _str;
 	var sl;
-
 	if(str.length > _l) {
   	var sl = Math.floor((_l / 2) - 2);
   	str = str.substr(0, sl) + "..." + str.substr(-sl, sl);
@@ -1018,24 +1053,22 @@ function trimString(_str, _l) {
 }
 
 /** ----------------------------------------------------------------------------
- * @function getCVarName(_raw_name) Sanitise name into C variable name
- * 
- * @param	{string} _str Raw name we need to format
- * 
+ * @function cleanString(_raw_name) Sanitise name into C variable name
+ * @param	{string} _raw Raw name we need to format
  * @return {string} str Variable name copmlying with C variable constraints
  * -------------------------------------------------------------------------- */
 
-function getCVarName(_raw_name) {
-	var raw = _raw_name;
+function cleanString(_raw) {
+	var raw = _raw;
 	var safe_chars = /[a-z_0-9]/i;
-	var safe_name = "";
+	var clean_string = "";
 	for (var i = 0, len = raw.length; i < len; i++) {
 		if (raw[i] === ".") {
 			break;
 		}
 		if (safe_chars.test(raw[i])) {
-			safe_name += raw[i];
+			clean_string += raw[i];
 		}
 	}
-	return safe_name;
+	return clean_string;
 }

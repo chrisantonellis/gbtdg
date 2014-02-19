@@ -1,53 +1,66 @@
 
-// #############################################################################
-// Variables
-// #############################################################################
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Notes                                                                      //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// file input			- 26px
+// checkbox input - 16px
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Variables                                                                  //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
 @input-width: 	182px;
-@output-width:	640px;
-@output-height: 500px;
+@output-width:	540px;
 @spacing:				 10px;
 @border-radius:   3px;
 
-// #############################################################################
-// Global
-// #############################################################################
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Global                                                                     //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
-body
-{
+html, body {
+	height: 100%;
+}
+
+body {
 	margin: 0px;
-
 	font-family: 'Open Sans', sans-serif;
 	font-size: 13px;
 	color: #333;
 	background: url('img/bg.gif');
 }
 
-// #############################################################################
-// Hidden Elements
-// #############################################################################
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Hidden Elements                                                            //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
-// Hidden Canvas
-canvas#hidden-canvas
-{
+canvas#hidden-canvas {
 	position: fixed;
 	z-index: -1;
 	visibility: hidden;
 }
 
-// Hidden File Input
-input[type="file"]#file-input
-{
+input[type="file"]#file-input {
 	position: fixed;
 	visibility: hidden;
 }
 
-// #############################################################################
-// Header
-// #############################################################################
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Header                                                                     //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
-header
-{
+header {
 	display: block;
 
 	width: @input-width + @output-width - (@spacing * 2);
@@ -56,8 +69,7 @@ header
 	color: #CCC;
 	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
 
-	img
-	{
+	img {
 		display: inline-block;
 		position: relative;
 		top: 4px;
@@ -65,8 +77,7 @@ header
 		margin: 0px 2px 0px 0px;
 	}
 
-	span
-	{
+	span {
 		display: inline-block;
 		margin: 0px;
 		padding: 0px;
@@ -74,8 +85,7 @@ header
 		font-size: 18px;
 	}
 
-	a
-	{
+	a {
 		display: inline-block;
 		margin: 0px 0px 0px 15px;
 		padding: 5px 10px;
@@ -90,8 +100,7 @@ header
 
 		border-radius: @border-radius;
 
-		&:hover
-		{
+		&:hover {
 			color: #fff;
 			text-shadow: 0px 1px 0px #000;
 
@@ -101,35 +110,57 @@ header
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Main Container                                                             //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
-// #############################################################################
-// Main Container
-// #############################################################################
-
-div#main
-{
+div#main-container {
+	display: table;
 	margin: 0px auto;
 	padding: 0px;
 
 	width: (@input-width + @output-width);
+	height: 100%;
+	min-height: 700px;
 
+	overflow: hidden;
+
+	& > div {
+		display: table-row;
+		width: 100%;
+
+		& > div {
+			display: table-cell;
+			width: 100%;
+		}
+	}
+}
+
+div#app-container {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+div#app {
+	margin: 0px;
+	padding: 0px;
 	border-radius: 3px;
-
 	overflow: hidden;
-
 	box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
-
 	background: #CCC;
-
 	position: relative;
+	height: 100%;
 
-	overflow: hidden;
-
-	// ###########################################################################
-	// Text Page
-	// ###########################################################################
-	div#text-page
-	{
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Text Page                                                                  //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+	
+	div#text-page {
 		position: absolute;
 
 		z-index: 1000;
@@ -142,18 +173,15 @@ div#main
 		display: none;
 		opacity: 0;
 
-		a:not(.text-page)
-		{
+		a:not(.text-page) {
 			color: inherit;
 
-			&:hover
-			{
+			&:hover {
 				color: #000;
 			}
 		}
 
-		a.text-page
-		{
+		a.text-page {
 			display: inline-block;
 			margin: @spacing;
 			padding: 8px 20px;
@@ -165,26 +193,23 @@ div#main
 			border-radius: @border-radius;
 
 			box-shadow: inset 0px 1px 0px #FFF,
-												0px 1px 0px #FFF;
+				0px 1px 0px #FFF;
 
 			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7);
 
-			&:hover
-			{
+			&:hover {
 				border: 1px solid #999;
 				color: #000;
 				background: rgba(0, 0, 0, 0.05);
 			}
 		}
 
-		span
-		{
+		span {
 			font-weight: 700;
 			color: #333;
 		}
 
-		div#content
-		{
+		div#content {
 			margin: 0px;
 			padding: 10px;
 
@@ -194,8 +219,7 @@ div#main
 
 			color: #404040;
 
-			h1
-			{
+			h1 {
 				display: block;
 				margin: 10px;
 				padding: 0px 0px 5px 0px;
@@ -208,13 +232,11 @@ div#main
 				border-bottom: 1px dotted rgba(0, 0, 0, 0.4);
 			}
 
-			p
-			{
+			p {
 				margin: @spacing;
 			}
 
-			table#compatibility
-			{
+			table#compatibility {
 				display: block;
 				margin: @spacing;
 
@@ -223,25 +245,19 @@ div#main
 
 				overflow: hidden;
 
-				tr
-				{
-					&:not(:last-child)
-					{
-						td
-						{
+				tr {
+					&:not(:last-child) {
+						td {
 							border-bottom: 1px solid #D0D0D0;
 						}
 					}
 
-					td
-					{
-						&:first-child
-						{
+					td {
+						&:first-child {
 							background: #D0D0D0;
 						}
 
-						&:last-child
-						{
+						&:last-child {
 							font-size: 11px;
 
 							width: 99%;
@@ -249,14 +265,12 @@ div#main
 							padding: 0px 0px 0px @spacing;
 						}
 
-						&.icon
-						{
+						&.icon {
 							padding: 6px 8px 2px 6px;
 
 							border-right: 1px dotted #D0D0D0;
 
-							img.broken
-							{
+							img.broken {
 								opacity: 0.25;
 							}
 						}
@@ -267,10 +281,8 @@ div#main
 	}
 
 	// Headings H1
-	form#input, div#output
-	{
-		h1
-		{
+	form#input, div#output {
+		h1 {
 			display: block;
 
 			margin: 0px;
@@ -281,21 +293,16 @@ div#main
 			font-weight: normal;
 			text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
 
-			img
-			{
+			img {
 				margin: -10px 10px 0px 0px;
 				position: relative;
 				top: 2px;
 			}
 		}
 	}
-
-	// ###########################################################################
-	// Advanced Options Control
-	// ###########################################################################
 	
-	a#advanced-control
-	{
+	// Advanced Options Control
+	a#advanced-control {
 		display: block;
 		position: absolute;
 		left: 0px;
@@ -304,42 +311,39 @@ div#main
 		padding: @spacing;
 
 		text-decoration: none;
-		font-size: 11px;
+		font-size: 13px;
 		text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
 
 		color: #333;
 
-		&:visited
-		{
+		&:visited {
 			color: #333
 		}
 
-		&:hover
-		{
+		&:hover {
 			color: #000;
 		}
 	}
 
-	// ###########################################################################
-	// Input Column
-	// ###########################################################################
-	
-	form#input
-	{
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Input Column                                                               //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+	form#input {
 		display: block;
 		float: left;
 		margin: 0px;
 		padding: 0px;
 
 		width: @input-width;
-		height: 100%;
 
 		position: relative;
 		z-index: 50;
 
-		// Visible Canvas ----------------------------------------------------------
-		figure
-		{
+		// Visible Canvas
+		figure {
 			display: block;
 
 			margin: 0px @spacing @spacing @spacing;
@@ -349,23 +353,19 @@ div#main
 
 			border-radius: @border-radius;
 
-			box-shadow:
-							-1px 0px 0px rgba(255, 255, 255, 0.7), // outside left
-				 			 1px 0px 0px rgba(255, 255, 255, 0.7), // outside right
-				 			 0px 1px 0px rgba(255, 255, 255, 0.7); // outside bottom
+			box-shadow: -1px 0px 0px rgba(255, 255, 255, 0.7), // outside left
+				1px 0px 0px rgba(255, 255, 255, 0.7), // outside right
+				0px 1px 0px rgba(255, 255, 255, 0.7); // outside bottom
 			
 			overflow: hidden;
 
-			&:hover
-			{
-				canvas
-				{
+			&:hover {
+				canvas {
 					opacity: 0.5;
 				}
 			}
 
-			canvas#canvas
-			{
+			canvas#canvas {
 				display: block;
 				margin: 0px;
 				padding: 0px;
@@ -379,9 +379,8 @@ div#main
 			}
 		}
 
-		// Image Attributes --------------------------------------------------------
-		ul#attributes
-		{
+		// Image Attributes
+		ul#attributes {
 			display: block;
 			margin: 0px 0px @spacing 0px;
 			padding: @spacing 0px;
@@ -397,10 +396,8 @@ div#main
 
 			box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
 
-			li
-			{
-				span.title
-				{
+			li {
+				span.title {
 					display: inline-block;
 					margin: 0px;
 					padding: 0px;
@@ -411,16 +408,14 @@ div#main
 					text-shadow: none;
 				}
 
-				span:not(.title)
-				{
+				span:not(.title) {
 					color: #000;
 				}
 			}
 		}
 
-		// Output Options ----------------------------------------------------------
-		ul#options
-		{
+		// Output Options
+		ul#options {
 			display: block;
 			margin: 0px;
 			padding: 0px;
@@ -432,29 +427,25 @@ div#main
 			border-top:		 1px solid rgba(0, 0, 0, 0.4);
 			border-bottom: 1px solid rgba(255, 255, 255, 0.5);
 			
-			li
-			{
+			li {
 				display: block;
 
 				border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 				box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.7);
 
-				-webkit-user-select: none;	// safari, chrome
-		    -moz-user-select: none;			// firefox
-		    -khtml-user-select: none; 	// konqueror
+				-webkit-user-select: none; // safari, chrome
+		    -moz-user-select: none; // firefox
+		    -khtml-user-select: none; // konqueror
 
-		    &:hover
-		    {
+		    &:hover {
 		    	background: #BBB;
 
-		    	label
-		    	{
+		    	label {
 		    		color: #000;
 		    	}
 		    }
 
-		    label.label
-				{
+		    label.label {
 					display: block;
 					margin: 0px;
 					padding: 5px @spacing;
@@ -465,23 +456,20 @@ div#main
 					text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
 				}
 
-				label.pad-value
-				{
+				label.pad-value {
 					display: inline-block;
 					margin: 0px;
 					padding: 0px;
 				}
 
-				input[type="checkbox"]
-				{
+				input[type="checkbox"], input[type="radio"] {
 					position: relative;
 					top: 1px;
 
 					margin: 0px 5px 0px 0px;
 				}
 
-				span
-				{
+				span {
 					display: block;
 					margin: 0px 0px 5px 0px;
 					padding: 0px;
@@ -489,14 +477,12 @@ div#main
 					font-size: 12px;
 				}
 
-				div.text-input
-				{
+				div.text-input {
 					display: inline-block;
 					margin: 0px;
 					padding: 0px;
 
-					input[type="text"]
-					{
+					input[type="text"] {
 						display: block;
 
 						margin: 0px 0px 5px 0px;
@@ -510,19 +496,16 @@ div#main
 						box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2),
 															0px 1px 0px rgba(255, 255, 255, 0.8);
 
-						&#line-label, &#constant-label
-						{
+						&#line-label, &#constant-label {
 							width: 80px;
 						}
 
-						&#hex-prefix
-						{
+						&#hex-prefix {
 							width: 20px;
 							text-align: center;
 						}
 
-						&.pad-value
-						{
+						&.pad-value {
 							display: inline-block;
 							margin: 0px 5px 5px 5px;
 							width: 20px;
@@ -532,16 +515,14 @@ div#main
 					}
 				}
 
-				p
-				{
+				p {
 					margin-left: 0px;
 				}
 			}
 		}
 
-		// Advanced Options --------------------------------------------------------
-		div#advanced-options
-		{
+		// Advanced Options
+		div#advanced-options {
 			position: absolute;
 			background: #CCC;
 
@@ -555,8 +536,7 @@ div#main
 
 			border-top-left-radius: @border-radius;
 
-			p
-			{
+			p {
 				display: block;
 				margin: 0px 0px 5px 10px;
 				padding: 0px 20px 0px 0px;
@@ -567,19 +547,21 @@ div#main
 		}
 	}
 
-	// ###########################################################################
-	// Output Column
-	// ###########################################################################
-	div#output
-	{
-		display: block;
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Output Column                                                              //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+	div#output {
+		display: table;
 		box-sizing: border-box;
 
 		margin: 0px;
-		padding: 0px 0px @spacing 0px;
+		padding: 0px;
 
 		width: @output-width;
-		min-height: 400px;
+		height: 100%;
 
 		margin: 0px 0px 0px @input-width;
 
@@ -595,46 +577,48 @@ div#main
 		position: relative;
 		z-index: 100;
 
-		// Download
-		a#download
-		{
-			float: right;
-			padding: @spacing;
-			margin: 0px 5px;
+		& > div {
+			display: table-row;
+			& > div {
+				display: table-cell;
+			}
+		}
 
-			color: inherit;
-			text-decoration: none;
+		div#output-header {
 
-			&:hover
-			{
-				color: #000;
-				text-decoration: underline;
+			// Download Data link
+			a#download {
+				float: right;
+				padding: @spacing;
+				margin: 0px 5px;
+
+				color: inherit;
+				text-decoration: none;
+
+				&:hover {
+					color: #000;
+					text-decoration: underline;
+				}
 			}
 		}
 
 		// Textarea
-		div#textarea-container
-		{
-			display: block;
+		div#textarea-container {
+			margin: 0px;
+			padding: 0px 10px 10px 10px;
 
 			box-sizing: border-box;
+			height: 100%;
 
-			margin: 0px;
-			padding: 0px;
-
-			overflow: hidden;
-
-			textarea
-			{
+			textarea {
 				display: block;
 
-				margin: 0px @spacing;
+				margin: 0px;
 				padding: 10px;
 
-				width: @output-width - ((@spacing * 4) + 2);
-				min-height: @output-height;
+				width: @output-width - ((@spacing * 2) + 2);
+				height: 100%;
 
-				border: 0px;
 				background: #E0E0E0;
 
 				font-family: "Lucida Console", monospace;
@@ -646,8 +630,7 @@ div#main
 				border: 1px solid rgba(0, 0, 0, 0.6);
 				border-radius: @border-radius;
 
-				&:focus
-				{
+				&:focus {
 					outline: none;
 				}
 			}
@@ -655,19 +638,19 @@ div#main
 	}
 }
 
-// Footer
-footer
-{
-	display: block;
-	margin: 0px auto;
-	padding: @spacing 0px;
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Footer                                                                     //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
 
-	width: @input-width + @output-width;
+footer {
+	display: block;
+	margin: 10px auto 20px auto;
 
 	text-align: right;
 
-	span
-	{
+	span {
 		display: block;
 		margin: 0px @spacing;
 
@@ -675,28 +658,18 @@ footer
 		color: #666;
 		text-shadow: 0px -1px 0pc rgba(0, 0, 0, 0.3);
 
-		a
-		{
+		a {
 			text-decoration: none;
 			color: inherit;
 
-			&:hover
-			{
+			&:hover {
 				color: #999;
 			}
 		}
 
-		img
-		{
+		img {
 			position: relative;
 			top: 2px;
 		}
 	}
 }
-
-// #############################################################################
-// Notes
-// #############################################################################
-
-// file input			- 26px
-// checkbox input - 16px
