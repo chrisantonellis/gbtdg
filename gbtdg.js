@@ -846,7 +846,7 @@ function generateOutput() {
 				generateHex(actual_tileData_length * 16, o_hex_prefix)  +
 				o_line_end + "\r\n" +
 				o_var_int + file_name_clean + "_tile_count " + o_var_equals + " " +
-				generateHex(image_tc, o_hex_prefix) +
+				generateHex(actual_tileData.length, o_hex_prefix) +
 				o_line_end + "\r\n\r\n";
 		}
 
