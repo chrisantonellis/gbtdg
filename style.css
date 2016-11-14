@@ -6,7 +6,7 @@ body {
   margin: 0px;
   font-family: 'Open Sans', sans-serif;
   font-size: 13px;
-  color: #333333;
+  color: #333;
   background: url('img/bg.gif');
 }
 canvas#hidden-canvas {
@@ -22,7 +22,7 @@ header {
   display: block;
   width: 782px;
   margin: 20px auto 10px auto;
-  color: #cccccc;
+  color: #CCC;
   text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
 }
 header img {
@@ -49,8 +49,8 @@ header a {
   border-radius: 3px;
 }
 header a:hover {
-  color: white;
-  text-shadow: 0px 1px 0px black;
+  color: #fff;
+  text-shadow: 0px 1px 0px #000;
   background: rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.2);
 }
@@ -82,7 +82,7 @@ div#app {
   border-radius: 3px;
   overflow: hidden;
   box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
-  background: #cccccc;
+  background: #CCC;
   position: relative;
   height: 100%;
 }
@@ -99,32 +99,33 @@ div#app div#text-page a:not(.text-page) {
   color: inherit;
 }
 div#app div#text-page a:not(.text-page):hover {
-  color: black;
+  color: #000;
 }
 div#app div#text-page a.text-page {
   display: inline-block;
   margin: 10px;
   padding: 8px 20px;
-  color: #333333;
+  color: #333;
   text-decoration: none;
   border: 1px solid rgba(0, 0, 0, 0.25);
   border-radius: 3px;
-  box-shadow: inset 0px 1px 0px white, 0px 1px 0px white;
+  box-shadow: inset 0px 1px 0px #FFF,
+				0px 1px 0px #FFF;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7);
 }
 div#app div#text-page a.text-page:hover {
-  border: 1px solid #999999;
-  color: black;
+  border: 1px solid #999;
+  color: #000;
   background: rgba(0, 0, 0, 0.05);
 }
 div#app div#text-page span {
   font-weight: 700;
-  color: #333333;
+  color: #333;
 }
 div#app div#text-page div#content {
   margin: 0px;
   padding: 10px;
-  background: #e8e8e8;
+  background: #E8E8E8;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4);
   color: #404040;
 }
@@ -132,7 +133,7 @@ div#app div#text-page div#content h1 {
   display: block;
   margin: 10px;
   padding: 0px 0px 5px 0px;
-  color: #333333;
+  color: #333;
   font-weight: normal;
   font-size: 18px;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7);
@@ -144,15 +145,15 @@ div#app div#text-page div#content p {
 div#app div#text-page div#content table#compatibility {
   display: block;
   margin: 10px;
-  border: 1px solid #cccccc;
+  border: 1px solid #CCC;
   border-radius: 3px;
   overflow: hidden;
 }
 div#app div#text-page div#content table#compatibility tr:not(:last-child) td {
-  border-bottom: 1px solid #d0d0d0;
+  border-bottom: 1px solid #D0D0D0;
 }
 div#app div#text-page div#content table#compatibility tr td:first-child {
-  background: #d0d0d0;
+  background: #D0D0D0;
 }
 div#app div#text-page div#content table#compatibility tr td:last-child {
   font-size: 11px;
@@ -161,7 +162,7 @@ div#app div#text-page div#content table#compatibility tr td:last-child {
 }
 div#app div#text-page div#content table#compatibility tr td.icon {
   padding: 6px 8px 2px 6px;
-  border-right: 1px dotted #d0d0d0;
+  border-right: 1px dotted #D0D0D0;
 }
 div#app div#text-page div#content table#compatibility tr td.icon img.broken {
   opacity: 0.25;
@@ -169,8 +170,8 @@ div#app div#text-page div#content table#compatibility tr td.icon img.broken {
 div#app form#input h1,
 div#app div#output h1 {
   display: block;
-  margin: 0px;
   padding: 10px;
+  margin: 0px;
   font-size: 14px;
   font-weight: normal;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
@@ -186,22 +187,23 @@ div#app a#advanced-control {
   position: absolute;
   left: 0px;
   bottom: 0px;
+  z-index: 100;
   padding: 10px;
   text-decoration: none;
   font-size: 13px;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
-  color: #333333;
+  color: #333;
 }
 div#app a#advanced-control:visited {
-  color: #333333;
+  color: #333;
 }
 div#app a#advanced-control:hover {
-  color: black;
+  color: #000;
 }
 div#app form#input {
   display: block;
   float: left;
-  margin: 0px;
+  margin: 0px 0px 40px;
   padding: 0px;
   width: 182px;
   position: relative;
@@ -248,7 +250,7 @@ div#app form#input ul#attributes li span.title {
   text-shadow: none;
 }
 div#app form#input ul#attributes li span:not(.title) {
-  color: black;
+  color: #000;
 }
 div#app form#input ul#options {
   display: block;
@@ -268,10 +270,10 @@ div#app form#input ul#options li {
   -khtml-user-select: none;
 }
 div#app form#input ul#options li:hover {
-  background: #bbbbbb;
+  background: #BBB;
 }
 div#app form#input ul#options li:hover label {
-  color: black;
+  color: #000;
 }
 div#app form#input ul#options li label.label {
   display: block;
@@ -330,11 +332,11 @@ div#app form#input ul#options li p {
   margin-left: 0px;
 }
 div#app form#input div#advanced-options {
-  position: absolute;
-  background: #cccccc;
+  background: #CCC;
   width: 182px;
   height: 100%;
   z-index: 1000;
+  position: absolute;
   left: 182px;
   border-top-left-radius: 3px;
 }
@@ -346,6 +348,13 @@ div#app form#input div#advanced-options p {
   line-height: 1.2;
   text-shadow: none;
 }
+div#app div.output-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
 div#app div#output {
   display: table;
   box-sizing: border-box;
@@ -354,7 +363,7 @@ div#app div#output {
   width: 620px;
   height: 100%;
   margin: 0px 0px 0px 182px;
-  background: white;
+  background: #fff;
   border-left: 1px solid rgba(0, 0, 0, 0.8);
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
@@ -376,7 +385,7 @@ div#app div#output div#output-header a#download {
   text-decoration: none;
 }
 div#app div#output div#output-header a#download:hover {
-  color: black;
+  color: #000;
   text-decoration: underline;
 }
 div#app div#output div#textarea-container {
@@ -389,12 +398,13 @@ div#app div#output div#textarea-container textarea {
   display: block;
   margin: 0px;
   padding: 10px;
-  width: 598px;
+  box-sizing: border-box;
+  width: 100%;
   height: 100%;
-  background: #e0e0e0;
+  background: #E0E0E0;
   font-family: "Lucida Console", monospace;
   font-size: 11px;
-  color: #333333;
+  color: #333;
   resize: none;
   border: 1px solid rgba(0, 0, 0, 0.6);
   border-radius: 3px;
@@ -411,7 +421,7 @@ footer span {
   display: block;
   margin: 0px 10px;
   font-size: 11px;
-  color: #666666;
+  color: #666;
   text-shadow: 0px -1px 0pc rgba(0, 0, 0, 0.3);
 }
 footer span a {
@@ -419,7 +429,7 @@ footer span a {
   color: inherit;
 }
 footer span a:hover {
-  color: #999999;
+  color: #999;
 }
 footer span img {
   position: relative;
