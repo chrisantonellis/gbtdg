@@ -63,6 +63,7 @@ var o_tile_data	= "checked";
 var o_tile_map = "checked";
 var o_tile_quan	= "checked";
 var o_pad_map = null;
+var o_tile_tall = null;
 var o_asm_format = "checked";
 var o_c_format = null;
 
@@ -92,6 +93,7 @@ var download_ext = ".inc";
 var output_buffer = "";
 
 // Global Arrays
+var pixelData = [];
 var tileData = [];
 var mapData = [];
 var warnings = [];
@@ -157,7 +159,7 @@ $(document).ready(function() {
 			var hidden_img = new Image();
 			hidden_img.src = e.target.result;
 
-		  hidden_img.onload = function() {
+			hidden_img.onload = function() {
 
 				// Error check: Pixel dimensions
 		  	if(hidden_img.width > max_width || hidden_img.height > max_height) {
@@ -169,6 +171,7 @@ $(document).ready(function() {
 				// No input file errors, program can continue
 
 				// Reset Global Arrays
+        pixelData = [];
 				tileData = [];
 				mapData = [];
 				warnings = [];
@@ -197,9 +200,6 @@ $(document).ready(function() {
 					image_pw = hidden_img.width;
 				}
 
-				// Image Tile Width
-				image_tw = image_pw / tile_pw;
-
 				// Image Pixel Height
 				if(hidden_img.height % tile_ph !== 0) {
 					image_ph = hidden_img.height + (tile_ph - (hidden_img.height % tile_ph));
@@ -209,12 +209,8 @@ $(document).ready(function() {
 					image_ph = hidden_img.height;
 				}
 
-				// Image Tile Height
-				image_th = image_ph / tile_ph;
 				// Image Total Pixel Count
 				image_pc = image_pw * image_ph;
-				// Image Total Tile Count 
-				image_tc = image_tw * image_th;
 
 				// Place image on hidden canvas ----------------------------------------
 
@@ -232,8 +228,6 @@ $(document).ready(function() {
 		    // Get Image Pixel Data ------------------------------------------------
 		    
 				var imageData = hidden_canvas_context.getImageData(0, 0, image_pw, image_ph);
-
-				var pixelData = [];
 
 				// Convert tile data to grayscale
 				for(var y = 0; y < image_ph; y++) {
@@ -286,44 +280,8 @@ $(document).ready(function() {
 				hidden_canvas_context.putImageData(imageData, 0, 0);
 
 				// Generate Tile Data --------------------------------------------------
-				
-				for(var y_tile = 0; y_tile < image_th; y_tile++) {
-				  for(var x_tile = 0; x_tile < image_tw; x_tile++) {
 
-				  	var tile_index = ((y_tile * image_tw) + x_tile);
-				  	tileData[tile_index] = [];
-
-				  	for(var y_pixel = 0; y_pixel < tile_ph; y_pixel++) {
-
-				  		var byte_0 = 0x00;
-				  		var byte_1 = 0x00;
-
-				  		var bitmask = 0x80;
-
-				  		for(var x_pixel = 0; x_pixel < tile_pw; x_pixel++) {
-				  			var index = (((y_tile * tile_ph) + y_pixel) * image_pw) + ((x_tile * tile_pw) + x_pixel);
-				  			var pixel = pixelData[index];
-
-				  			if(pixel === 0) {
-				  				// Black
-				  				byte_0 = byte_0 | bitmask;
-				  				byte_1 = byte_1 | bitmask;
-				  			} else if(pixel === 1) {
-				  				// Dark Grey
-				  				byte_1 = byte_1 | bitmask;
-				  			} else if(pixel === 2) {
-				  				// Light Grey
-				  				byte_0 = byte_0 | bitmask;
-				  			} else {
-				  				// White
-				  			}
-				  			bitmask = bitmask >> 1;
-				  		}
-				  		tileData[tile_index].push(byte_0, byte_1);
-				  	}
-				  	mapData.push(tile_index);
-				  }
-				}
+        generateTileData();
 
 				// Generate and Display Output -----------------------------------------
 				
@@ -511,6 +469,14 @@ function optionsCheckboxesHandler() {
 			generateOutput();
 		})
 	});
+
+  
+  $("input#tile-tall").click(function(){
+		// Get Options Values
+    getOptionsValues();
+    generateTileData();
+    generateOutput();
+  });
 }
 
 /** ----------------------------------------------------------------------------
@@ -654,6 +620,58 @@ function optionsTextInputsHandler() {
 // Data Generation                                                            //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+
+/** ----------------------------------------------------------------------------
+ * @function generateTileData() Generates the tile data from the image
+ * -------------------------------------------------------------------------- */
+
+function generateTileData(){
+	
+	// Image Tile Width
+	image_tw = image_pw / tile_pw;
+	// Image Tile Height
+	image_th = image_ph / tile_ph;
+	// Image Total Tile Count 
+	image_tc = image_tw * image_th;
+
+	for(var y_tile = 0; y_tile < image_th; y_tile++) {
+	  for(var x_tile = 0; x_tile < image_tw; x_tile++) {
+
+	  	var tile_index = ((y_tile * image_tw) + x_tile);
+	  	tileData[tile_index] = [];
+
+	  	for(var y_pixel = 0; y_pixel < tile_ph; y_pixel++) {
+
+	  		var byte_0 = 0x00;
+	  		var byte_1 = 0x00;
+
+	  		var bitmask = 0x80;
+
+	  		for(var x_pixel = 0; x_pixel < tile_pw; x_pixel++) {
+	  			var index = (((y_tile * tile_ph) + y_pixel) * image_pw) + ((x_tile * tile_pw) + x_pixel);
+	  			var pixel = pixelData[index];
+
+	  			if(pixel === 0) {
+	  				// Black
+	  				byte_0 = byte_0 | bitmask;
+	  				byte_1 = byte_1 | bitmask;
+	  			} else if(pixel === 1) {
+	  				// Dark Grey
+	  				byte_1 = byte_1 | bitmask;
+	  			} else if(pixel === 2) {
+	  				// Light Grey
+	  				byte_0 = byte_0 | bitmask;
+	  			} else {
+	  				// White
+	  			}
+	  			bitmask = bitmask >> 1;
+	  		}
+	  		tileData[tile_index].push(byte_0, byte_1);
+	  	}
+	  	mapData.push(tile_index);
+	  }
+	}
+}
 
 /** ----------------------------------------------------------------------------
  * @function quantizeTileData() Quantizes global tile data array
@@ -871,16 +889,18 @@ function generateOutput() {
 				output_buffer += o_line_begin;
 
 				for(var i = 0; i < actual_mapData_length; i++) {
-					output_buffer += generateHex(actual_mapData[i], o_hex_prefix);
+          var outputMap = actual_mapData[i];
+          if (o_tile_tall){
+            outputMap *= 2;
+          }
+					output_buffer += generateHex(outputMap, o_hex_prefix);
 
 					if(i !== (actual_mapData_length - 1)) {
 						if((i + 1) % 16 !== 0) {
 							output_buffer += ",";
 						} else {
 							output_buffer += o_array_line_end + "\r\n";
-							if(i !== (actual_mapData_length - 1)) {
-								output_buffer += o_line_begin;
-							}
+							output_buffer += o_line_begin;
 						}
 					} else {
 						output_buffer += "\r\n";
@@ -911,22 +931,26 @@ function generateOutput() {
 				output_buffer += o_var_char + file_name_clean + "_tile_data[] " + o_var_equals + o_array_begin;
 			}
 
+      var num_bytes = (tile_ph * tile_pw / 4);
+
+			output_buffer += o_line_begin;
+
 			for(var i = 0; i < actual_tileData_length; i++) {
 
-				output_buffer += o_line_begin;
-
-				for(var j = 0; j < 16; j++) {
+				for(var j = 0; j < num_bytes; j++) {
 					output_buffer += generateHex(actual_tileData[i][j], o_hex_prefix);
 
-					if ((j + 1) % 16 !== 0) {
+					if((j + 1) % 16 !== 0) {
 						output_buffer += ",";
-					} else if (i + 1 < actual_tileData_length) {
-						output_buffer += o_array_line_end;
+					} else {
+					  if(j !== (num_bytes - 1) || 
+               i !== (actual_tileData_length - 1)) {
+							output_buffer += o_array_line_end + "\r\n";
+							output_buffer += o_line_begin;
+					  } else {
+					  	output_buffer += "\r\n";
+					  }
 					}
-				}
-
-				if(i !== (image_tc - 1)) {
-					output_buffer += "\r\n";
 				}
 			}
 			output_buffer += o_array_end;
@@ -949,7 +973,7 @@ function generateOutput() {
 			encodeURIComponent(output_buffer));
 
 		// Display Output
-		$('textarea#textarea').val(output_buffer);
+		$("textarea#textarea").val(output_buffer);
 	}
 }
 
@@ -968,6 +992,12 @@ function getOptionsValues() {
 	o_tile_map = $("input#tile-map").attr("checked");
 	o_tile_quan = $("input#tile-quantize").attr("checked");
 	o_pad_map = $("input#pad-map").attr("checked");
+  o_tile_tall = $("input#tile-tall").attr("checked");
+  if (o_tile_tall){
+    tile_ph = 16;
+  } else {
+    tile_ph = 8;
+  }
 
 	// Text Inputs
 	// o_line_begin = $("input#line-label").val().toString();
@@ -999,6 +1029,10 @@ function loadOptionsValues() {
 	o_pad_map === "checked" ?
 		$("input#pad-map").attr("checked", "checked") : 
 		$("input#pad-map").removeAttr("checked");
+
+  o_tile_tall === "checked" ?
+    $("input#tile-tall").attr("checked", "checked") :
+    $("input#tile-tall").removeAttr("checked");
 
 	o_asm_format === "checked" ?
 		$("input#asm-format").attr("checked", "checked") : 
