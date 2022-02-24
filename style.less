@@ -307,6 +307,7 @@ div#app {
 		position: absolute;
 		left: 0px;
 		bottom: 0px;
+		z-index: 100;
 
 		padding: @spacing;
 
@@ -334,7 +335,7 @@ div#app {
 	form#input {
 		display: block;
 		float: left;
-		margin: 0px;
+		margin: 0px 0px 40px;
 		padding: 0px;
 
 		width: @input-width;
@@ -553,6 +554,14 @@ div#app {
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
+	div.output-wrapper {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+
 	div#output {
 		display: table;
 		box-sizing: border-box;
@@ -616,7 +625,8 @@ div#app {
 				margin: 0px;
 				padding: 10px;
 
-				width: @output-width - ((@spacing * 2) + 2);
+				box-sizing: border-box;
+				width: 100%;
 				height: 100%;
 
 				background: #E0E0E0;
