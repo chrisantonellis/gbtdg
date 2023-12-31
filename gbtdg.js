@@ -157,10 +157,10 @@ $(document).ready(function() {
 			var hidden_img = new Image();
 			hidden_img.src = e.target.result;
 
-		  hidden_img.onload = function() {
+			hidden_img.onload = function() {
 
 				// Error check: Pixel dimensions
-		  	if(hidden_img.width > max_width || hidden_img.height > max_height) {
+				if(hidden_img.width > max_width || hidden_img.height > max_height) {
 					alert("Image dimensions are too large.\nMaximum width is " + 
 						max_width + "px and maximum height is " + max_height + "px.");
 					return;
@@ -227,28 +227,28 @@ $(document).ready(function() {
 				hidden_canvas_context.fillRect(0, 0, image_pw, image_ph);
 
 				// Draw Image on Hidden Canvas
-		    hidden_canvas_context.drawImage(hidden_img, 0, 0);
+				hidden_canvas_context.drawImage(hidden_img, 0, 0);
 
-		    // Get Image Pixel Data ------------------------------------------------
-		    
+				// Get Image Pixel Data ------------------------------------------------
+
 				var imageData = hidden_canvas_context.getImageData(0, 0, image_pw, image_ph);
 
 				var pixelData = [];
 
 				// Convert tile data to grayscale
 				for(var y = 0; y < image_ph; y++) {
-				  for(var x = 0; x < image_pw; x++) {
-				  	var index = ((y * image_pw) * 4) + (x * 4);
+					for(var x = 0; x < image_pw; x++) {
+						var index = ((y * image_pw) * 4) + (x * 4);
 
-				  	// Read RGB Data
-				  	var r = imageData.data[index];
-				  	var g = imageData.data[index + 1];
-				  	var b = imageData.data[index + 2];
-				    
-				    var val = ((r * 0.3) + (g * 0.59) + (b * 0.11));
-				    var new_val;
+						// Read RGB Data
+						var r = imageData.data[index];
+						var g = imageData.data[index + 1];
+						var b = imageData.data[index + 2];
 
-				    // Convert grayscale value to 4 color value
+						var val = ((r * 0.3) + (g * 0.59) + (b * 0.11));
+						var new_val;
+
+						// Convert grayscale value to 4 color value
 						if(val >= 0 && val < 85) {
 							if(val < 65) {
 								new_val = 0;
@@ -267,7 +267,7 @@ $(document).ready(function() {
 							}
 						} else if(val >= 170 && val <= 255) {
 							if(val < 193) {
-								new_val =  170;
+								new_val = 170;
 								pixelData.push(2);
 							} else {
 								new_val = 255;
@@ -275,11 +275,11 @@ $(document).ready(function() {
 							}
 						}
 
-				    // Save Greyscale RGB Data
-				    imageData.data[index] = new_val;
-				    imageData.data[index + 1] = new_val;
-				    imageData.data[index + 2] = new_val;
-				  }
+						// Save Greyscale RGB Data
+						imageData.data[index] = new_val;
+						imageData.data[index + 1] = new_val;
+						imageData.data[index + 2] = new_val;
+					}
 				}
 
 				// Apply Greyscale Image to Hidden Canvas
@@ -288,41 +288,41 @@ $(document).ready(function() {
 				// Generate Tile Data --------------------------------------------------
 				
 				for(var y_tile = 0; y_tile < image_th; y_tile++) {
-				  for(var x_tile = 0; x_tile < image_tw; x_tile++) {
+					for(var x_tile = 0; x_tile < image_tw; x_tile++) {
 
-				  	var tile_index = ((y_tile * image_tw) + x_tile);
-				  	tileData[tile_index] = [];
+						var tile_index = ((y_tile * image_tw) + x_tile);
+						tileData[tile_index] = [];
 
-				  	for(var y_pixel = 0; y_pixel < tile_ph; y_pixel++) {
+						for(var y_pixel = 0; y_pixel < tile_ph; y_pixel++) {
 
-				  		var byte_0 = 0x00;
-				  		var byte_1 = 0x00;
+							var byte_0 = 0x00;
+							var byte_1 = 0x00;
 
-				  		var bitmask = 0x80;
+							var bitmask = 0x80;
 
-				  		for(var x_pixel = 0; x_pixel < tile_pw; x_pixel++) {
-				  			var index = (((y_tile * tile_ph) + y_pixel) * image_pw) + ((x_tile * tile_pw) + x_pixel);
-				  			var pixel = pixelData[index];
+							for(var x_pixel = 0; x_pixel < tile_pw; x_pixel++) {
+								var index = (((y_tile * tile_ph) + y_pixel) * image_pw) + ((x_tile * tile_pw) + x_pixel);
+								var pixel = pixelData[index];
 
-				  			if(pixel === 0) {
-				  				// Black
-				  				byte_0 = byte_0 | bitmask;
-				  				byte_1 = byte_1 | bitmask;
-				  			} else if(pixel === 1) {
-				  				// Dark Grey
-				  				byte_1 = byte_1 | bitmask;
-				  			} else if(pixel === 2) {
-				  				// Light Grey
-				  				byte_0 = byte_0 | bitmask;
-				  			} else {
-				  				// White
-				  			}
-				  			bitmask = bitmask >> 1;
-				  		}
-				  		tileData[tile_index].push(byte_0, byte_1);
-				  	}
-				  	mapData.push(tile_index);
-				  }
+								if(pixel === 0) {
+									// Black
+									byte_0 = byte_0 | bitmask;
+									byte_1 = byte_1 | bitmask;
+								} else if(pixel === 1) {
+									// Dark Grey
+									byte_1 = byte_1 | bitmask;
+								} else if(pixel === 2) {
+									// Light Grey
+									byte_0 = byte_0 | bitmask;
+								} else {
+									// White
+								}
+								bitmask = bitmask >> 1;
+							}
+							tileData[tile_index].push(byte_0, byte_1);
+						}
+						mapData.push(tile_index);
+					}
 				}
 
 				// Generate and Display Output -----------------------------------------
@@ -331,15 +331,15 @@ $(document).ready(function() {
 
 				// Apply Image to Visible Canvas ---------------------------------------
 				
-		    var image = new Image();
-		    image.src = $("canvas#hidden-canvas")[0].toDataURL();
+				var image = new Image();
+				image.src = $("canvas#hidden-canvas")[0].toDataURL();
 
-		    var new_width;
+				var new_width;
 				var new_height;
 
-		    image.onload = function() {
+				image.onload = function() {
 
-			  	// Determine Image Dimensions for Visible Canvas
+					// Determine Image Dimensions for Visible Canvas
 					if((image.width > canvas.width && image.height < canvas.height) ||
 					   (image.width > canvas.width && image.height > canvas.height && image.width > image.height)) {
 
@@ -349,12 +349,12 @@ $(document).ready(function() {
 					} else if((image.width < canvas.width && image.height > canvas.height) || 
 						(image.width > canvas.width && image.height > canvas.height && image.width < image.height)) {
 
-						new_width 	= Math.ceil((canvas.height * image.width) / image.height);
-						new_height  = canvas.height;
+						new_width  = Math.ceil((canvas.height * image.width) / image.height);
+						new_height = canvas.height;
 
 					} else if(image.width > canvas.width && image.height > canvas.width && image.width === image.height) {
 
-						new_width = canvas.width;
+						new_width  = canvas.width;
 						new_height = canvas.height;
 
 					} else if (image.width <= canvas.width && image.height <= canvas.height) {
@@ -368,15 +368,16 @@ $(document).ready(function() {
 					var y = Math.floor((canvas.height - new_height) / 2);
 
 					// Clear Visible Canvas
-		  		canvas_context.save();
+					canvas_context.save();
 					canvas_context.globalCompositeOperation = "destination-out";
 					canvas_context.clearRect(0, 0, canvas.width, canvas.height);
 					canvas_context.restore();
+					$("canvas#canvas")[0].textContent = "";
 
 					// Draw Image on Visisble Canvas
 					canvas_context.drawImage(image, 0, 0, image.width, image.height, x, y, new_width, new_height);
 				}
-		  }
+			}
 		}
 	});
 });
@@ -476,11 +477,11 @@ function advancedOptionsControl() {
 				animating = true;
 
 				$("div#advanced-options").animate({left:0}, advanced_options_duration, function() {
-	      	animating = false;
-	      	advanced_options = true;
-	      });
+					animating = false;
+					advanced_options = true;
+				});
 
-	      $(this).html(advanced_options_text_hide);
+				$(this).html(advanced_options_text_hide);
 
 				$("div#app-container").click(function(e) {
 					e.stopPropagation();
@@ -623,8 +624,8 @@ function optionsTextInputsHandler() {
 			    e.keyCode !== 46 && // Delete
 			   (e.keyCode < 37 || e.keyCode > 57)){ // 0-9
 
-        return false;
-      }
+				return false;
+			}
 		});
 	});
 
@@ -643,8 +644,8 @@ function optionsTextInputsHandler() {
 			    e.keyCode !== 46 && // Delete
 			   (e.keyCode < 37 || e.keyCode > 70)){ // 0-9, a-f
 
-        return false;
-      }
+				return false;
+			}
 		});
 	});
 }
@@ -768,7 +769,7 @@ function generateOutput() {
 		var actual_mapData_length;
 
 		// Get Options Values
-    getOptionsValues();
+		getOptionsValues();
 
 		// Clear Output Buffer
 		output_buffer = "";
@@ -1048,10 +1049,10 @@ function trimString(_str, _l) {
 	var str = _str;
 	var sl;
 	if(str.length > _l) {
-  	var sl = Math.floor((_l / 2) - 2);
-  	str = str.substr(0, sl) + "..." + str.substr(-sl, sl);
-  }
-  return str;
+		var sl = Math.floor((_l / 2) - 2);
+		str = str.substr(0, sl) + "..." + str.substr(-sl, sl);
+	}
+	return str;
 }
 
 /** ----------------------------------------------------------------------------
