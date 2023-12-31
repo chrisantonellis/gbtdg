@@ -372,6 +372,7 @@ $(document).ready(function() {
 					canvas_context.globalCompositeOperation = "destination-out";
 					canvas_context.clearRect(0, 0, canvas.width, canvas.height);
 					canvas_context.restore();
+					$("canvas#canvas")[0].textContent = "";
 
 					// Draw Image on Visisble Canvas
 					canvas_context.drawImage(image, 0, 0, image.width, image.height, x, y, new_width, new_height);
